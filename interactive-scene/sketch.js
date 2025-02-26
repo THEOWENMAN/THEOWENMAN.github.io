@@ -5,7 +5,6 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-
 let x;
 let y;
 let dy;
@@ -25,8 +24,8 @@ let waitTime = 5000;
 
 
 function setup() {
-  createCanvas(400, 400);
-  for (let x = 0; x < width; x += width / 5) {
+  createCanvas(windowWidth, windowHeight);
+  for (let x = 0; x < width; x += width / 10) {
     let asteroid = {
       x: random(0, width),
       y: random(-200, 0),
@@ -48,18 +47,22 @@ function draw() {
   instructions();
 }
 
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+
 function gameStart(){
   if(keyCode===LEFT_ARROW){
-  backgroundColor=0;
-  state="game";
+    backgroundColor=0;
+    state="game";
   }
   if(keyCode===RIGHT_ARROW){
-  backgroundColor=255;
-  state="instructions";
+    backgroundColor=255;
+    state="instructions";
   }
   if(keyCode===82){
-  backgroundColor=255;
-  state="start";
+    backgroundColor=255;
+    state="start";
   }
 }
 
@@ -68,34 +71,33 @@ function instructions(){
     fill("black");
     text("instructions",60,60);
     text("....................",60,60); 
-}
+  }
 }
 
 function game(){
   if(state === "game"){
-  drawAsteroid();
-  moveAsteroid();
-  repeatAsteroid();
-  text("score: " + score, 50, 50);
-  text("key: " + userinput, 50, 100);
-  text("Max Scrolls: " + maxscrolls, 60, 150);
+    drawAsteroid();
+    moveAsteroid();
+    repeatAsteroid();
+    text("score: " + score, 50, 50);
+    text("key: " + userinput, 50, 100);
+    text("Max Scrolls: " + maxscrolls, 60, 150);
   }  
 }
 
 function startScreen(){
   if(state === "start"){
-  fill("black");
-  text("title", 60, 150);
-  text("Button1", 60, 150);
-  text("Button2", 60, 150);
-  gameStart();
+    fill("black");
+    textSize(100);
+    textAlign(CENTER);
+    text("Asteroid Game", width/2, height/3);
   } 
 }
 
 function drawAsteroid() {
   for (let asteroid of asteroids) {
     fill(asteroid.r, asteroid.g, asteroid.b);
-    circle(asteroid.x, asteroid.y, 30);
+    circle(asteroid.x, asteroid.y, 45);
     fill(255);
     textSize(16);
     textAlign(CENTER, CENTER);
@@ -116,7 +118,7 @@ function repeatAsteroid() {
       asteroid.x = random(width);
       asteroid.dy = random(1, 3);
       colorChange(asteroid);
-      number = floor(random(0, 10));
+      asteroid.number = floor(random(0, 10));
     }
   }
 }
@@ -124,12 +126,14 @@ function repeatAsteroid() {
 function mouseClicked() {
   for (let asteroid of asteroids) {
     let distance = dist(mouseX, mouseY, asteroid.x, asteroid.y);
-    if (distance < 20 && int(userinput) === asteroid.number) {
+    if (distance < 30 && int(userinput) === asteroid.number) {
       score += 1;
       userinput="";
       asteroid.y = random(-100, 0);
       asteroid.x = random(width);
       asteroid.dy = random(1, 3);
+      colorChange(asteroid);
+      asteroid.number = floor(random(0, 10));
     }
   }
 }
@@ -149,26 +153,27 @@ function keyPressed(){
   }
 }
 
-
 function mouseWheel(){
-  if (millis>switchTime+waitTime&&maxscrolls>0){
+  if (millis()>switchTime+waitTime&&maxscrolls>0){
     maxscrolls -= 1;
+    switchTime = millis();
     freeze = !freeze;
   } 
 }
 
 function stopAsteroids(){
   if(freeze){
-  for (let asteroid of asteroids) {
-  asteroid.y = random(-100, 0);
-  asteroid.x = random(width);
-  asteroid.dy = 0; 
-   }
+    for (let asteroid of asteroids) {
+      asteroid.dy = 1; 
+    }
   }
   else{
-  for (let asteroid of asteroids) {
-  asteroid.dy = 1; 
+    for (let asteroid of asteroids) {
+      asteroid.y = random(-100, 0);
+      asteroid.x = random(width);
+      asteroid.dy = 0; 
+    }
   }
 }
-}
+
 
