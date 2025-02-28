@@ -46,6 +46,7 @@ function changeLight(){
       state = "yellowLight";
       switchTime = millis();
     }
+    console.log(state);
   }
   else if(state === "yellowLight"){
     fill("yellow");
@@ -54,6 +55,7 @@ function changeLight(){
       state = "redLight";
       switchTime = millis();
     }
+    console.log(state);
   }
   else if(state === "redLight"){
     fill("red");
@@ -63,4 +65,5 @@ function changeLight(){
       switchTime = millis();
     }
   }
+  console.log(state);
 }

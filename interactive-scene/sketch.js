@@ -4,6 +4,7 @@
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
+// I did the mousescroll function for my extra for experts
 
 let x;
 let y;
@@ -57,7 +58,7 @@ function gameStart(){
     state="game";
   }
   if(keyCode===RIGHT_ARROW){
-    backgroundColor=255;
+    backgroundColor="#e500a4";
     state="instructions";
   }
   if(keyCode===82){
@@ -69,8 +70,14 @@ function gameStart(){
 function instructions(){
   if(state==="instructions"){
     fill("black");
-    text("instructions",60,60);
-    text("....................",60,60); 
+    textSize(100);
+    textAlign(CENTER,CENTER);
+    text("Instructions",width/2,height/height*100);
+    textSize(50);
+    text("Instructions is button or key 'I'",width/2,height/2-100); 
+    text("Main Page is key 'R'",width/2,height/2); 
+    text("Game is button or key 'G'",width/2,height/2+100); 
+    text("Game is button or key 'G'",width/2,height/2+200); 
   }
 }
 
@@ -79,9 +86,10 @@ function game(){
     drawAsteroid();
     moveAsteroid();
     repeatAsteroid();
-    text("score: " + score, 50, 50);
+    textSize(30);
+    text("score: " + score, 70, 50);
     text("key: " + userinput, 50, 100);
-    text("Max Scrolls: " + maxscrolls, 60, 150);
+    text("Max Scrolls: " + maxscrolls, 110, 150);
   }  
 }
 
@@ -89,7 +97,7 @@ function startScreen(){
   if(state === "start"){
     fill("black");
     textSize(100);
-    textAlign(CENTER);
+    textAlign(CENTER,CENTER);
     text("Asteroid Game", width/2, height/3);
   } 
 }
