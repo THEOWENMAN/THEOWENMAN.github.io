@@ -163,7 +163,6 @@ function colorChange(asteroid) {
   asteroid.b = random(0, 255);
 }
 
-
 // Action section
 // Mouse clicks buttons start and instructions, and for clicking the asteroids
 function mouseClicked() {
