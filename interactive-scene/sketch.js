@@ -156,7 +156,7 @@ function repeatAsteroid() {
   }
 }
 
-// Changes the asteroid colors
+// Changes the asteroids' colors
 function colorChange(asteroid) {
   asteroid.r = random(0, 255);
   asteroid.g = random(0, 255);
@@ -174,7 +174,7 @@ function mouseClicked() {
   }
   for (let asteroid of asteroids) {
     let distance = dist(mouseX, mouseY, asteroid.x, asteroid.y);
-    if (distance < 30 && int(userinput) === asteroid.number) {
+    if (distance < 25 && int(userinput) === asteroid.number) {
       score += 1;
       userinput="";
       asteroid.y = random(-100, 0);
