@@ -2,11 +2,10 @@
 // Owen Tang
 // March 4, 2025
 // Purpose: The purpose of the project is to create an asteroid game with basic JS code
-// Extra for Experts:
-// I coded the mousescroll function for my extra for experts
+// Extra for Experts: I coded the mousescroll function and audio for my extra for experts
 
 
-// Global variables
+// Define global variables
 let x;
 let y;
 let dy;
@@ -20,7 +19,8 @@ let score = 0;
 let number;
 let startScreenBG;
 let gameStartBG;
-let maxscrolls = 3;
+let audioAsteroidHit;
+let maxScrolls = 3;
 let freeze = false;
 let switchTime = 0;
 let waitTime = 5000;
@@ -44,7 +44,7 @@ function setup() {
   }
 }
 
-// Run the three different screens
+// Run the three different screens based on state variable
 function draw() {
   if (state==="start"){
     startScreen();
@@ -62,10 +62,11 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
-// Loads the images/bgimages into the code
+// Loads the images/bgimages and audio into the code
 function preload() {
   startScreenBG = loadImage("space-bg.jpg"); 
   gameStartBG = loadImage("gamestart-bg.jpg");
+  audioAsteroidHit = createAudio("asteroid-hitting-something-152511.mp3");
 }
 
 // Instruction page: Includes different instructions expressed with text
@@ -93,7 +94,7 @@ function game(){
   textSize(30);
   text("Score: " + score, 70, 50);
   text("Key: " + userinput, 50, 100);
-  text("Max Scrolls: " + maxscrolls, 110, 150);
+  text("Max Scrolls: " + maxScrolls, 110, 150);
 }
 
 // Start Screen Page: Start screen with the start and instruction buttons
@@ -131,7 +132,7 @@ function drawAsteroid() {
   }
 }
 
-// Physics or movement of the asteroids
+// Physics or movement of the asteroids and freeze movement
 function moveAsteroid() {
   if(!freeze){
     for (let asteroid of asteroids) {
@@ -177,6 +178,7 @@ function mouseClicked() {
     if (distance < 25 && int(userinput) === asteroid.number) {
       score += 1;
       userinput="";
+      audioAsteroidHit.play();
       asteroid.y = random(-100, 0);
       asteroid.x = random(width);
       asteroid.dy = random(1, 3);
@@ -186,7 +188,7 @@ function mouseClicked() {
   }
 }
 
-// If letters are pressed, different screens show. Number keys are for the gameplay
+// If letters are pressed, different screens show. Number keys 0-9 are for the gameplay
 function keyPressed(){
   if (keyCode>=48&&keyCode<=57){
     userinput = key;
@@ -205,10 +207,10 @@ function keyPressed(){
   }
 }
 
-// When scrolled freeze asteroids
+// When mouse scrolled freeze asteroids
 function mouseWheel(){
-  if (millis()>switchTime+waitTime&&maxscrolls>0){
-    maxscrolls -= 1;
+  if (millis()>switchTime+waitTime&&maxScrolls>0){
+    maxScrolls -= 1;
     switchTime = millis();
     freeze = true;
     freezeStart = millis();
