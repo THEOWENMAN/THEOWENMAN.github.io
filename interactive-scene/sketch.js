@@ -46,13 +46,13 @@ function setup() {
 
 // Run the three different screens based on state variable
 function draw() {
-  if (state==="start"){
+  if (state === "start"){
     startScreen();
   }
-  else if (state==="game"){
+  else if (state === "game"){
     game();
   }
-  else if (state==="instructions"){
+  else if (state === "instructions"){
     instructions();
   }
 }
@@ -74,20 +74,20 @@ function instructions(){
   background(255);
   fill("black");
   textSize(100);
-  textAlign(CENTER,CENTER);
-  text("Instructions",width/2,height/2-300);
+  textAlign(CENTER, CENTER);
+  text("Instructions", width/2, height/2-300);
   textSize(50);
-  text("Instructions is button or key 'I'",width/2,height/2-100); 
-  text("Main Page is key 'M'",width/2,height/2); 
-  text("Game is button or key 'G'",width/2,height/2+100); 
+  text("Instructions is button or key 'I'", width/2, height/2-100); 
+  text("Main Page is key 'M'", width/2, height/2); 
+  text("Game is button or key 'G'", width/2, height/2+100); 
   textSize(30);
-  text("How to play? Press a number on keypad and use mouse to click on asteroid,",width/2,height/2+250); 
-  text("score increases by 1 each time and use the scroll on mouse to pause time.",width/2,height/2+350);
+  text("How to play? Press a number on keypad and use mouse to click on asteroid,", width/2, height/2+250); 
+  text("score increases by 1 each time and use the scroll on mouse to pause time.", width/2, height/2+350);
 }
 
 // Game page: Includes asteroid functions and text for game information
 function game(){
-  image(gameStartBG,0,0,width,height);
+  image(gameStartBG, 0, 0, width,height);
   drawAsteroid();
   moveAsteroid();
   repeatAsteroid();
@@ -99,19 +99,19 @@ function game(){
 
 // Start Screen Page: Start screen with the start and instruction buttons
 function startScreen(){
-  image(startScreenBG,0,0,width,height);
+  image(startScreenBG, 0, 0, width,height);
   drawStartButtons();
   fill("white");
   textSize(100);
-  textAlign(CENTER,CENTER);
+  textAlign(CENTER, CENTER);
   text("Asteroid Game", width/2, height/4);
 }
 
 // Buttons for the start Screen
 function drawStartButtons(){
   fill(255);
-  rect(width/2-280,height/2,250,100);
-  rect(width/2+20,height/2,250,100);
+  rect(width/2-280, height/2, 250, 100);
+  rect(width/2+20, height/2, 250, 100);
   fill(0); 
   textSize(32);
   textAlign(CENTER, CENTER); 
@@ -167,11 +167,11 @@ function colorChange(asteroid) {
 // Action section
 // Mouse clicks buttons start and instructions, and for clicking the asteroids
 function mouseClicked() {
-  if (state==="start"&&mouseX>width/2-280&&mouseX<width/2-280+250&&mouseY>height/2&&mouseY<height/2+100){
-    state="game";
+  if (state === "start" && mouseX > width/2-280 && mouseX < width/2-280+250 && mouseY > height/2 && mouseY <height/2+100){
+    state = "game";
   }
-  if (state==="start"&&mouseX>width/2+20&&mouseX<width/2+20+250&&mouseY>height/2&&mouseY<height/2+100){
-    state="instructions";
+  if (state === "start" && mouseX > width/2+20 && mouseX < width/2+20+250 && mouseY > height/2 && mouseY < height/2+100){
+    state = "instructions";
   }
   for (let asteroid of asteroids) {
     let distance = dist(mouseX, mouseY, asteroid.x, asteroid.y);
@@ -190,7 +190,7 @@ function mouseClicked() {
 
 // If letters are pressed, different screens show. Number keys 0-9 are for the gameplay
 function keyPressed(){
-  if (keyCode>=48&&keyCode<=57){
+  if (keyCode >= 48 && keyCode <= 57){
     userinput = key;
   }
   else if(keyCode===BACKSPACE){
@@ -209,7 +209,7 @@ function keyPressed(){
 
 // When mouse scrolled freeze asteroids
 function mouseWheel(){
-  if (millis()>switchTime+waitTime&&maxScrolls>0){
+  if (millis() > switchTime + waitTime && maxScrolls > 0){
     maxScrolls -= 1;
     switchTime = millis();
     freeze = true;
