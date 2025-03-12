@@ -7,9 +7,10 @@
 
 let x;
 let y;
-let dx;
-let dy;
+let dx = 5;
+let dy = 5;
 let bulletsArray = [];
+let state = "startScreen";
 // function preload() {
 //   // connect to a p5party server
 //   partyConnect(
@@ -24,10 +25,10 @@ let bulletsArray = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
+  let bulletStart = createVector(x, y);
+  let bulletEnd = createVector(0, -1);
   x=width/2;
   y=height/2;
-  dx=5;
-  dy=5;
 }
 
 function draw() {
@@ -41,6 +42,22 @@ function draw() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
+}
+
+function startScreen(){
+
+}
+
+function instructions(){
+  
+}
+
+function mapOne(){
+  
+}
+
+function mapTwo(){
+  
 }
 
 function drawBall(){
@@ -64,7 +81,7 @@ function mousePressed(){
 
 function drawBullet(bullet){
   fill("red");
-  circle(bullet.x, bullet.y, 50); 
+  circle(bullet.x, bullet.y, 5); 
 }
 
 
