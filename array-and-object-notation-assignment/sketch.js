@@ -9,7 +9,7 @@ let x;
 let y;
 let dx;
 let dy;
-let bullets = [];
+let bulletsArray = [];
 // function preload() {
 //   // connect to a p5party server
 //   partyConnect(
@@ -34,12 +34,39 @@ function draw() {
   background(220);
   drawBall();
   move();
+  for (let bullet of bulletsArray){
+    drawBullet(bullet);
+  }
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
 
 function drawBall(){
   fill("black");
   circle(x,y, 20);
 }
+
+function spawnBullet(){
+  let bullet = {
+    x: x,
+    y: y,
+    dx: dx,
+    dy: dy,
+  };
+  bulletsArray.push(bullet);
+}
+
+function mousePressed(){
+  spawnBullet();
+}
+
+function drawBullet(bullet){
+  fill("red");
+  circle(bullet.x, bullet.y, 50); 
+}
+
 
 
 function move(){
