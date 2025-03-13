@@ -5,12 +5,11 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-let x;
-let y;
-let dx = 5;
-let dy = 5;
+let playerPosition;
 let bulletsArray = [];
 let state = "startScreen";
+let dx = 5;
+let dy = 5;
 // function preload() {
 //   // connect to a p5party server
 //   partyConnect(
@@ -25,10 +24,7 @@ let state = "startScreen";
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  let bulletStart = createVector(x, y);
-  let bulletEnd = createVector(0, -1);
-  x=width/2;
-  y=height/2;
+  let playerPosition = createVector(width/2, height/2);
 }
 
 function draw() {
@@ -37,6 +33,7 @@ function draw() {
   move();
   for (let bullet of bulletsArray){
     drawBullet(bullet);
+    moveBullet(bullet);
   }
 }
 
@@ -60,17 +57,19 @@ function mapTwo(){
   
 }
 
+function moveBullet(bullet){
+  bullet.pos.add(bullet.vel);
+}
+
 function drawBall(){
   fill("black");
-  circle(x,y, 20);
+  circle(width/2,height/2, 20);
 }
 
 function spawnBullet(){
   let bullet = {
-    x: x,
-    y: y,
-    dx: dx,
-    dy: dy,
+    pos: createVector(playerPosition.x, playerPosition.y),
+    vel: createVector(mouseX - playerPosition.X, mouseY - playerPosition.y),
   };
   bulletsArray.push(bullet);
 }
@@ -84,19 +83,17 @@ function drawBullet(bullet){
   circle(bullet.x, bullet.y, 5); 
 }
 
-
-
 function move(){
   if (keyIsDown(87)||keyIsDown(UP_ARROW)) {//w
-    y-=dy;
+    playerPosition-=dy;
   }
   if (keyIsDown(65)||keyIsDown(LEFT_ARROW)) {//a
-    x-=dx;
+    playerPosition-=dx;
   }
   if (keyIsDown(83)||keyIsDown(DOWN_ARROW)) {//s
-    y+=dy;
+    playerPosition+=dy;
   }
   if (keyIsDown(68)||keyIsDown(RIGHT_ARROW)) {//d
-    x+=dx;
+    playerPosition+=dx;
   }
 }
