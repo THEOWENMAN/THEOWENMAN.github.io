@@ -5,11 +5,11 @@
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
-let playerPosition;
 let bulletsArray = [];
 let state = "startScreen";
-let dx = 5;
-let dy = 5;
+let playerPosition;
+
+const movement = 5;
 // function preload() {
 //   // connect to a p5party server
 //   partyConnect(
@@ -24,16 +24,30 @@ let dy = 5;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  let playerPosition = createVector(width/2, height/2);
+  playerPosition = createVector(width/2,height/2);
 }
 
 function draw() {
   background(220);
   drawBall();
   move();
+
   for (let bullet of bulletsArray){
     drawBullet(bullet);
     moveBullet(bullet);
+  }
+
+  if (state === "start"){
+    startScreen();
+  }
+  else if (state === "instructions"){
+    instructions();
+  }
+  else if (state === "mapOne"){
+    mapOne();
+  }
+  else if (state === "mapTwo"){
+    mapTwo();
   }
 }
 
@@ -42,6 +56,8 @@ function windowResized() {
 }
 
 function startScreen(){
+  background(255);
+
 
 }
 
@@ -57,13 +73,10 @@ function mapTwo(){
   
 }
 
-function moveBullet(bullet){
-  bullet.pos.add(bullet.vel);
-}
 
 function drawBall(){
   fill("black");
-  circle(width/2,height/2, 20);
+  circle(playerPosition.x,playerPosition.y, 20);
 }
 
 function spawnBullet(){
@@ -74,26 +87,34 @@ function spawnBullet(){
   bulletsArray.push(bullet);
 }
 
+function moveBullet(bullet){
+  bullet.pos.add(bullet.vel);
+}
+
+function playerWallDetection(){
+  if (playerPosition.x > width-20){}
+}
+
 function mousePressed(){
-  spawnBullet();
+  spawnBullet(bullet);
 }
 
 function drawBullet(bullet){
   fill("red");
-  circle(bullet.x, bullet.y, 5); 
+  circle(playerPosition.x, playerPosition.y, 5); 
 }
 
 function move(){
   if (keyIsDown(87)||keyIsDown(UP_ARROW)) {//w
-    playerPosition-=dy;
+    playerPosition.y-=movement;
   }
   if (keyIsDown(65)||keyIsDown(LEFT_ARROW)) {//a
-    playerPosition-=dx;
+    playerPosition.x-=movement;
   }
   if (keyIsDown(83)||keyIsDown(DOWN_ARROW)) {//s
-    playerPosition+=dy;
+    playerPosition.y+=movement;
   }
   if (keyIsDown(68)||keyIsDown(RIGHT_ARROW)) {//d
-    playerPosition+=dx;
+    playerPosition.x+=movement;
   }
 }
