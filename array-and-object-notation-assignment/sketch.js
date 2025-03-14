@@ -8,8 +8,9 @@
 let bulletsArray = [];
 let state = "startScreen";
 let playerPosition;
-
-const movement = 5;
+let diameterPlayer = 20;
+let diameterBullet = 5;
+const movement = 3;
 // function preload() {
 //   // connect to a p5party server
 //   partyConnect(
@@ -76,13 +77,17 @@ function mapTwo(){
 
 function drawBall(){
   fill("black");
-  circle(playerPosition.x,playerPosition.y, 20);
+  circle(playerPosition.x,playerPosition.y, diameterPlayer);
 }
 
 function spawnBullet(){
+  let direction = createVector(mouseX - playerPosition.x, mouseY - playerPosition.y);
+  direction.normalize();
+  direction.mult(5);
+
   let bullet = {
     pos: createVector(playerPosition.x, playerPosition.y),
-    vel: createVector(mouseX - playerPosition.X, mouseY - playerPosition.y),
+    vel: direction,
   };
   bulletsArray.push(bullet);
 }
@@ -92,16 +97,16 @@ function moveBullet(bullet){
 }
 
 function playerWallDetection(){
-  if (playerPosition.x > width-20){}
+  if (playerPosition.x > width-20||playerPosition.x<width+20||playerPosition.y){}
 }
 
 function mousePressed(){
-  spawnBullet(bullet);
+  spawnBullet();
 }
 
 function drawBullet(bullet){
   fill("red");
-  circle(playerPosition.x, playerPosition.y, 5); 
+  circle(bullet.pos.x, bullet.pos.y, diameterBullet); 
 }
 
 function move(){
