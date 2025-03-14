@@ -6,10 +6,17 @@
 // - describe what you did to take this project "above and beyond"
 
 let bulletsArray = [];
-let state = "startScreen";
+let state = "start";
 let playerPosition;
 let diameterPlayer = 20;
 let diameterBullet = 5;
+
+let instructionBG;
+let mapTwoBG;
+let mapOneBG;
+let startScreenBG;
+
+
 const movement = 3;
 // function preload() {
 //   // connect to a p5party server
@@ -52,26 +59,59 @@ function draw() {
   }
 }
 
+function preload() {
+  startScreenBG = loadImage("instructionBG.png"); 
+  mapOneBG = loadImage("background_1.avif");
+  mapTwoBG = loadImage("background_2.jpg");
+  instructionBG = loadImage("instructionBG.png");
+  // audioAsteroidHit = createAudio("asteroid-hitting-something-152511.mp3");
+}
+
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
 }
 
 function startScreen(){
-  background(255);
-
-
+  image(startScreenBG, 0, 0, width, height);
+  startButtons();
+  fill("black");
+  textSize(90);
+  textAlign(CENTER, CENTER);
+  text("2D BRAWL STARS", width/2, height/4);
 }
 
 function instructions(){
-  
+  image(instructionBG, 0, 0, width, height);
+  fill("black");
+  textSize(100);
+  textAlign(CENTER, CENTER);
+  text("INSTRUCTIONS", width/2, height/2-160);
+  textSize(50);
+  text("WASD TO MOVE", width/2, height/2-50); 
+  text("USE YOUR MOUSE TO SHOOT", width/2, height/2+50); 
 }
 
 function mapOne(){
+  background("black");
   
 }
 
 function mapTwo(){
+  background("white");
   
+}
+
+function startButtons(){
+  fill(255);
+  rect(width/2-480, height/2, 250, 100);
+  rect(width/2-130, height/2, 250, 100);
+  rect(width/2+220, height/2, 250, 100);
+  fill(0); 
+  textSize(32);
+  textAlign(CENTER, CENTER); 
+  text("MAP1", width/2-480+125, height/2+50); 
+  text("MAP2", width/2-130+125, height/2+50);
+  text("INFO", width/2+220+125, height/2+50);
 }
 
 
@@ -84,7 +124,6 @@ function spawnBullet(){
   let direction = createVector(mouseX - playerPosition.x, mouseY - playerPosition.y);
   direction.normalize();
   direction.mult(5);
-
   let bullet = {
     pos: createVector(playerPosition.x, playerPosition.y),
     vel: direction,
@@ -96,12 +135,12 @@ function moveBullet(bullet){
   bullet.pos.add(bullet.vel);
 }
 
-function playerWallDetection(){
-  if (playerPosition.x > width-20||playerPosition.x<width+20||playerPosition.y){}
-}
-
 function mousePressed(){
   spawnBullet();
+
+  if (state === "start" && mouseX > width/2-480 && mouseX < width/2-480+250 && mouseY > height/2 && mouseY <height/2+100){
+    state = "mapOne";
+  }
 }
 
 function drawBullet(bullet){
@@ -122,4 +161,17 @@ function move(){
   if (keyIsDown(68)||keyIsDown(RIGHT_ARROW)) {//d
     playerPosition.x+=movement;
   }
+
+  if (playerPosition.x - diameterPlayer>width){
+    playerPosition.x = -diameterPlayer;
+  } 
+  else if (playerPosition.x+diameterPlayer<0){
+    playerPosition.x = width + diameterPlayer;
+  } 
+  else if (playerPosition.y-diameterPlayer>height){
+    playerPosition.y = -diameterPlayer;
+  } 
+  else if (playerPosition.y+diameterPlayer<0){
+    playerPosition.y = height+ diameterPlayer;
+  } 
 }
