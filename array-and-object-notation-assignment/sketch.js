@@ -10,25 +10,15 @@ let state = "start";
 let playerPosition;
 let diameterPlayer = 20;
 let diameterBullet = 5;
-
-let instructionBG;
+let instructionsBG;
 let mapTwoBG;
 let mapOneBG;
+let startBG;
 let startScreenBG;
+let pos;
 
 
 const movement = 3;
-// function preload() {
-//   // connect to a p5party server
-//   partyConnect(
-//     "wss://demoserver.p5party.org",
-//     "hello_party"
-//   );
-  
-//   // tell p5.party to sync the pos object
-//   pos = partyLoadShared("pos", pos);
-  
-// }
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -36,15 +26,6 @@ function setup() {
 }
 
 function draw() {
-  background(220);
-  drawBall();
-  move();
-
-  for (let bullet of bulletsArray){
-    drawBullet(bullet);
-    moveBullet(bullet);
-  }
-
   if (state === "start"){
     startScreen();
   }
@@ -60,11 +41,15 @@ function draw() {
 }
 
 function preload() {
-  startScreenBG = loadImage("instructionBG.png"); 
+  startScreenBG = loadImage("startBG.png"); 
   mapOneBG = loadImage("background_1.avif");
   mapTwoBG = loadImage("background_2.jpg");
-  instructionBG = loadImage("instructionBG.png");
+  instructionsBG = loadImage("instructionsBG.avif");
   // audioAsteroidHit = createAudio("asteroid-hitting-something-152511.mp3");
+
+  partyConnect(
+    "wss://demoserver.p5party.org", "hello_party");
+  pos = partyLoadShared("pos", createVector(width/2,height/2));
 }
 
 function windowResized() {
@@ -81,7 +66,7 @@ function startScreen(){
 }
 
 function instructions(){
-  image(instructionBG, 0, 0, width, height);
+  image(instructionsBG, 0, 0, width, height);
   fill("black");
   textSize(100);
   textAlign(CENTER, CENTER);
@@ -89,16 +74,29 @@ function instructions(){
   textSize(50);
   text("WASD TO MOVE", width/2, height/2-50); 
   text("USE YOUR MOUSE TO SHOOT", width/2, height/2+50); 
+  text("1 = map1, 2 = map2, m = main menu, i = instructions", width/2, height/2+200); 
 }
 
 function mapOne(){
-  background("black");
-  
+  background(mapOneBG);
+  drawBall();
+  move();
+  for (let bullet of bulletsArray){
+    drawBullet(bullet);
+    moveBullet(bullet);
+  }
+  drawBarriersMapOne();
 }
 
 function mapTwo(){
-  background("white");
-  
+  background(mapTwoBG);
+  drawBall();
+  move();
+  for (let bullet of bulletsArray){
+    drawBullet(bullet);
+    moveBullet(bullet);
+  }
+  drawBarriersMapTwo();
 }
 
 function startButtons(){
@@ -124,8 +122,9 @@ function spawnBullet(){
   let direction = createVector(mouseX - playerPosition.x, mouseY - playerPosition.y);
   direction.normalize();
   direction.mult(5);
+  let position = createVector(playerPosition.x, playerPosition.y).add(20);
   let bullet = {
-    pos: createVector(playerPosition.x, playerPosition.y),
+    pos: position,
     vel: direction,
   };
   bulletsArray.push(bullet);
@@ -136,17 +135,54 @@ function moveBullet(bullet){
 }
 
 function mousePressed(){
-  spawnBullet();
-
-  if (state === "start" && mouseX > width/2-480 && mouseX < width/2-480+250 && mouseY > height/2 && mouseY <height/2+100){
-    state = "mapOne";
+  if (state === "start"){
+    if (mouseX > width/2-480 && mouseX < width/2-480+250 && mouseY > height/2 && mouseY <height/2+100){
+      state = "mapOne";
+      return;
+    }
+    if (mouseX > width/2-130 && mouseX < width/2-130+250 && mouseY > height/2 && mouseY <height/2+100){
+      state = "mapTwo";
+      return;
+    }
+    if (mouseX > width/2+220 && mouseX < width/2+220+250 && mouseY > height/2 && mouseY <height/2+100){
+      state = "instructions";
+      return;
+    }
   }
+  spawnBullet();
 }
 
 function drawBullet(bullet){
   fill("red");
   circle(bullet.pos.x, bullet.pos.y, diameterBullet); 
 }
+
+function drawBarriersMapOne(){
+  fill("black");
+  rect(550,150,25,200);
+  rect(350,350,225,25);
+
+  rect(950,150,25,200);
+  rect(950,350,225,25);
+
+  rect(550,500,25,200);
+  rect(350,500,225,25);
+
+  rect(950,500,25,200);
+  rect(950,500,225,25);
+}
+
+function drawBarriersMapTwo(){
+  fill("black");
+  translate (width/2, height/2);
+  rotate(QUARTER_PI/2);
+  rect(-550, -15, 200, 30);
+  rect(-250, -15, 200, 30);
+  rect(50, -15, 200, 30);
+  rect(350, -15, 200, 30);
+}
+
+//top and bottom code
 
 function move(){
   if (keyIsDown(87)||keyIsDown(UP_ARROW)) {//w
@@ -161,17 +197,33 @@ function move(){
   if (keyIsDown(68)||keyIsDown(RIGHT_ARROW)) {//d
     playerPosition.x+=movement;
   }
+  
+  if (playerPosition.x + diameterPlayer/2 > width){
+    playerPosition.x = width - diameterPlayer/2;
+  } 
+  else if (playerPosition.x - diameterPlayer/2 < 0){
+    playerPosition.x = diameterPlayer/2;
+  } 
+  else if (playerPosition.y + diameterPlayer/2 > height){
+    playerPosition.y = height - diameterPlayer/2;
+  } 
+  else if (playerPosition.y - diameterPlayer/2 < 0){
+    playerPosition.y = diameterPlayer/2;
+  } 
+}
 
-  if (playerPosition.x - diameterPlayer>width){
-    playerPosition.x = -diameterPlayer;
-  } 
-  else if (playerPosition.x+diameterPlayer<0){
-    playerPosition.x = width + diameterPlayer;
-  } 
-  else if (playerPosition.y-diameterPlayer>height){
-    playerPosition.y = -diameterPlayer;
-  } 
-  else if (playerPosition.y+diameterPlayer<0){
-    playerPosition.y = height+ diameterPlayer;
-  } 
+function keyPressed(){
+
+  if(keyCode === 49){//1
+    state = "mapOne";
+  }
+  if(keyCode === 50){//2
+    state = "mapTwo";
+  }
+  if(keyCode===73){//i
+    state = "instructions";
+  }
+  if(keyCode===77){//m
+    state = "start";
+  }
 }
