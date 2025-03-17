@@ -17,6 +17,12 @@ let startBG;
 let startScreenBG;
 let pos;
 
+let wallCollision = [
+  {x: 550, y: 150, w: 25, l: 200},
+  {x: 350, y: 350, w: 225, l: 25},
+  {x: 950, y: 150, w: 25, l: 200},
+
+];
 
 const movement = 3;
 
@@ -121,8 +127,8 @@ function drawBall(){
 function spawnBullet(){
   let direction = createVector(mouseX - playerPosition.x, mouseY - playerPosition.y);
   direction.normalize();
-  direction.mult(5);
-  let position = createVector(playerPosition.x, playerPosition.y).add(20);
+  direction.mult(4);
+  let position = createVector(playerPosition.x, playerPosition.y).add();
   let bullet = {
     pos: position,
     vel: direction,

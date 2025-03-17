@@ -5,6 +5,7 @@
 - [Generative Art](art)
 - [Perlin Noise Demo](perlin)
 - [Terrain Generation](terrain)
+- [Bubble Object Notation](bubbles)
 
 # CS30 Projects
 - [Interactive Scene](interactive-scene)
