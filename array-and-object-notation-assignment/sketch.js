@@ -17,11 +17,23 @@ let startBG;
 let startScreenBG;
 let pos;
 
-let wallCollision = [
+
+let wallsMapOne = [
   {x: 550, y: 150, w: 25, l: 200},
   {x: 350, y: 350, w: 225, l: 25},
   {x: 950, y: 150, w: 25, l: 200},
+  {x: 950, y: 350, w: 225, l: 25},
+  {x: 550, y: 500, w: 25, l: 200},
+  {x: 350, y: 500, w: 225, l: 25},
+  {x: 950, y: 500, w: 25, l: 200},
+  {x: 950, y: 500, w: 225, l: 25},
+];
 
+let wallsMapTwo = [
+  {x: -550, y: -15, w: 200, l: 30},
+  {x: -250, y: -15, w: 200, l: 30},
+  {x: 50, y: -15, w: 200, l: 30},
+  {x: 350, y: -15, w: 200, l: 30},
 ];
 
 const movement = 3;
@@ -92,6 +104,7 @@ function mapOne(){
     moveBullet(bullet);
   }
   drawBarriersMapOne();
+  wallDetectionBullet();
 }
 
 function mapTwo(){
@@ -128,7 +141,9 @@ function spawnBullet(){
   let direction = createVector(mouseX - playerPosition.x, mouseY - playerPosition.y);
   direction.normalize();
   direction.mult(4);
-  let position = createVector(playerPosition.x, playerPosition.y).add();
+  let position = createVector(playerPosition.x, playerPosition.y);
+  position.x += direction.x * (diameterPlayer/4);
+  position.y += direction.y * (diameterPlayer/4);
   let bullet = {
     pos: position,
     vel: direction,
@@ -165,27 +180,37 @@ function drawBullet(bullet){
 
 function drawBarriersMapOne(){
   fill("black");
-  rect(550,150,25,200);
-  rect(350,350,225,25);
-
-  rect(950,150,25,200);
-  rect(950,350,225,25);
-
-  rect(550,500,25,200);
-  rect(350,500,225,25);
-
-  rect(950,500,25,200);
-  rect(950,500,225,25);
+  for (let wall of wallsMapOne){
+    rect(wall.x, wall.y, wall.w, wall.l);
+  }
 }
+
+function wallDetectionBullet(){
+  for(let i = bulletsArray.length - 1; i >= 0; i--){
+    let bullet = bulletsArray[i];
+    for (let wall of wallsMapOne){
+      if (bullet.x + diameterBullet/2 > wall.x && bullet.x + diameterBullet/2 < wall.x + wall.w 
+        && bullet.y + diameterBullet/2 > wall.y && bullet.y + diameterBullet/2 < wall.y + wall.l){
+        let index = bulletsArray.indexOf(bullet);
+        bulletsArray.splice(index,1);
+      }
+    }
+  }
+}
+
+function wallDetectionPlayer(){
+
+}
+
+
 
 function drawBarriersMapTwo(){
   fill("black");
   translate (width/2, height/2);
   rotate(QUARTER_PI/2);
-  rect(-550, -15, 200, 30);
-  rect(-250, -15, 200, 30);
-  rect(50, -15, 200, 30);
-  rect(350, -15, 200, 30);
+  for (let wall of wallsMapTwo){
+    rect(wall.x, wall.y, wall.w, wall.l);
+  }
 }
 
 //top and bottom code
@@ -233,3 +258,10 @@ function keyPressed(){
     state = "start";
   }
 }
+
+
+// steps:
+// p5 party
+// bullet and player collisions
+// sound effects
+
