@@ -105,6 +105,7 @@ function mapOne(){
   }
   drawBarriersMapOne();
   wallDetectionBullet();
+  wallDetectionPlayer();
 }
 
 function mapTwo(){
@@ -189,16 +190,26 @@ function wallDetectionBullet(){
   for(let i = bulletsArray.length - 1; i >= 0; i--){
     let bullet = bulletsArray[i];
     for (let wall of wallsMapOne){
-      if (bullet.x + diameterBullet/2 > wall.x && bullet.x + diameterBullet/2 < wall.x + wall.w 
-        && bullet.y + diameterBullet/2 > wall.y && bullet.y + diameterBullet/2 < wall.y + wall.l){
+      if (bullet.pos.x + diameterBullet/2 > wall.x && bullet.pos.x + diameterBullet/2 < wall.x + wall.w 
+        && bullet.pos.y + diameterBullet/2 > wall.y && bullet.pos.y + diameterBullet/2 < wall.y + wall.l){
         let index = bulletsArray.indexOf(bullet);
         bulletsArray.splice(index,1);
+      }
+      if(bullet.pos.x + diameterBullet/2 > width || bullet.pos.x - diameterBullet/2 < 0 || 
+        bullet.pos.y + diameterBullet/2 > height || bullet.pos.y - diameterBullet/2 < 0){
+        let index = bulletsArray.indexOf(bullet);
+        bulletsArray.splice(index,1);/////////////fix
       }
     }
   }
 }
 
 function wallDetectionPlayer(){
+  for(let wall of wallsMapOne){
+    if (playerPosition.x + diameterPlayer/2 > wall.x && playerPosition.x + diameterPlayer/2 < wall.w){
+      playerPosition.x = wall.x - diameterPlayer/2;
+    }
+  }
 
 }
 

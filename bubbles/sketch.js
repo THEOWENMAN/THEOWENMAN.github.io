@@ -1,6 +1,7 @@
 // Bubble Object Notation and Arrays Demo
 
 let theBubbles = [];
+let deathSpots = [];
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -30,6 +31,11 @@ function draw() {
     fill(bubble.r, bubble.g, bubble.b);
     circle(bubble.x, bubble.y, bubble.radius*2);
   }
+  //show graves
+  fill("black");
+  for(let grave of deathSpots){
+    text("x", grave.x, grave.y);
+  }
 }
 
 function spawnBubble(){
@@ -53,6 +59,14 @@ function mousePressed(){
     if(dist(bubble.x, bubble.y, mouseX, mouseY) < bubble.radius){
       let index = theBubbles.indexOf(bubble);
       theBubbles.splice(index,1);
+
+
+      // add this spot to my death history
+      let spot = {
+        x: mouseX,
+        y: mouseY,
+      };
+      deathSpots.push(spot);
     }
   }
 }
