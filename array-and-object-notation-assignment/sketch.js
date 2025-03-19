@@ -18,7 +18,9 @@ let startScreenBG;
 let pos;
 let audioBulletShot;
 let walls;
-
+let me;
+let guests;
+let shared;
 
 let wallsMapOne = [
   {x: 550, y: 150, w: 25, l: 200},
@@ -70,9 +72,10 @@ function preload() {
   instructionsBG = loadImage("instructionsBG.avif");
   audioBulletShot = createAudio("laser-312360.mp3");
 
-  partyConnect(
-    "wss://demoserver.p5party.org", "hello_party");
-  pos = partyLoadShared("pos", createVector(width/2,height/2));
+  partyConnect("wss://demoserver.p5party.org", "array-and-object-notation-assignment");
+  me = partyLoadShared({ x: 200, y: 200 });
+  guests = partyLoadGuestShareds();
+  shared = partyLoadShared("shared", {bulletsArray: []});
 }
 
 function windowResized() {
@@ -216,8 +219,10 @@ function wallDetectionBullet(){
   for (let i = bulletsArray.length - 1; i >= 0; i--){
     let bullet = bulletsArray[i];
     for (let wall of walls){
-      if (bullet.pos.x + diameterBullet/2 > wall.x && bullet.pos.x + diameterBullet/2 < wall.x + wall.w 
-        && bullet.pos.y + diameterBullet/2 > wall.y && bullet.pos.y + diameterBullet/2 < wall.y + wall.l){
+      if (bullet.pos.x + diameterBullet/2 > wall.x && 
+        bullet.pos.x + diameterBullet/2 < wall.x + wall.w && 
+        bullet.pos.y + diameterBullet/2 > wall.y && 
+        bullet.pos.y + diameterBullet/2 < wall.y + wall.l){
         let index = bulletsArray.indexOf(bullet);
         bulletsArray.splice(index,1);
       }
@@ -312,6 +317,7 @@ function keyPressed(){
 
 // steps:
 // p5 party
-// playerPosition and player collisions
-// sound effects
+// https://p5party.org/examples/tanks/
+// if party cannot work make 2-3 balls bounce random and when bullet hit they splice or something. 
+
 
