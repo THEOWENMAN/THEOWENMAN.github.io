@@ -16,6 +16,8 @@ let mapOneBG;
 let startBG;
 let startScreenBG;
 let pos;
+let audioBulletShot;
+let walls;
 
 
 let wallsMapOne = [
@@ -30,17 +32,20 @@ let wallsMapOne = [
 ];
 
 let wallsMapTwo = [
-  {x: -550, y: -15, w: 200, l: 30},
-  {x: -250, y: -15, w: 200, l: 30},
-  {x: 50, y: -15, w: 200, l: 30},
-  {x: 350, y: -15, w: 200, l: 30},
+  {x: 250, y: 400, w: 100, l: 30},
+  {x: 400, y: 400, w: 100, l: 30},
+  {x: 550, y: 400, w: 100, l: 30},
+  {x: 700, y: 400, w: 100, l: 30},
+  {x: 850, y: 400, w: 100, l: 30},
+  {x: 1000, y: 400, w: 100, l: 30},
+  {x: 1150, y: 400, w: 100, l: 30},
 ];
 
 const movement = 3;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  playerPosition = createVector(width/2,height/2);
+  playerPosition = createVector(width/2 + 300,height/2 + 300);
 }
 
 function draw() {
@@ -63,7 +68,7 @@ function preload() {
   mapOneBG = loadImage("background_1.avif");
   mapTwoBG = loadImage("background_2.jpg");
   instructionsBG = loadImage("instructionsBG.avif");
-  // audioAsteroidHit = createAudio("asteroid-hitting-something-152511.mp3");
+  audioBulletShot = createAudio("laser-312360.mp3");
 
   partyConnect(
     "wss://demoserver.p5party.org", "hello_party");
@@ -106,6 +111,7 @@ function mapOne(){
   drawBarriersMapOne();
   wallDetectionBullet();
   wallDetectionPlayer();
+  canvasDetectionBullet();
 }
 
 function mapTwo(){
@@ -117,6 +123,9 @@ function mapTwo(){
     moveBullet(bullet);
   }
   drawBarriersMapTwo();
+  wallDetectionBullet();
+  wallDetectionPlayer();
+  canvasDetectionBullet();
 }
 
 function startButtons(){
@@ -171,7 +180,11 @@ function mousePressed(){
       return;
     }
   }
-  spawnBullet();
+  if (state === "mapOne" || state === "mapTwo"){
+    spawnBullet();
+    audioBulletShot.stop();
+    audioBulletShot.play();
+  }
 }
 
 function drawBullet(bullet){
@@ -186,41 +199,67 @@ function drawBarriersMapOne(){
   }
 }
 
+function drawBarriersMapTwo(){
+  fill("black");
+  for (let wall of wallsMapTwo){
+    rect(wall.x, wall.y, wall.w, wall.l);
+  }
+}
+
 function wallDetectionBullet(){
-  for(let i = bulletsArray.length - 1; i >= 0; i--){
+  if (state === "mapOne"){
+    walls = wallsMapOne;
+  }
+  else if (state === "mapTwo"){
+    walls = wallsMapTwo;
+  }
+  for (let i = bulletsArray.length - 1; i >= 0; i--){
     let bullet = bulletsArray[i];
-    for (let wall of wallsMapOne){
+    for (let wall of walls){
       if (bullet.pos.x + diameterBullet/2 > wall.x && bullet.pos.x + diameterBullet/2 < wall.x + wall.w 
         && bullet.pos.y + diameterBullet/2 > wall.y && bullet.pos.y + diameterBullet/2 < wall.y + wall.l){
         let index = bulletsArray.indexOf(bullet);
         bulletsArray.splice(index,1);
       }
-      if(bullet.pos.x + diameterBullet/2 > width || bullet.pos.x - diameterBullet/2 < 0 || 
-        bullet.pos.y + diameterBullet/2 > height || bullet.pos.y - diameterBullet/2 < 0){
-        let index = bulletsArray.indexOf(bullet);
-        bulletsArray.splice(index,1);/////////////fix
-      }
     }
   }
 }
+
+function canvasDetectionBullet(){
+  for (let i = bulletsArray.length - 1; i >= 0; i --){
+    let bullet = bulletsArray[i];
+    if(bullet.pos.x + diameterBullet/2 > width || bullet.pos.x - diameterBullet/2 < 0 || 
+      bullet.pos.y + diameterBullet/2 > height || bullet.pos.y - diameterBullet/2 < 0){
+      let index = bulletsArray.indexOf(bullet);
+      bulletsArray.splice(index,1);
+    }
+  }
+}
+
 
 function wallDetectionPlayer(){
-  for(let wall of wallsMapOne){
-    if (playerPosition.x + diameterPlayer/2 > wall.x && playerPosition.x + diameterPlayer/2 < wall.w){
-      playerPosition.x = wall.x - diameterPlayer/2;
-    }
+  if (state === "mapOne"){
+    walls = wallsMapOne;
   }
-
-}
-
-
-
-function drawBarriersMapTwo(){
-  fill("black");
-  translate (width/2, height/2);
-  rotate(QUARTER_PI/2);
-  for (let wall of wallsMapTwo){
-    rect(wall.x, wall.y, wall.w, wall.l);
+  else if (state === "mapTwo"){
+    walls = wallsMapTwo;
+  }
+  for(let wall of walls){
+    if (playerPosition.x + diameterPlayer/2 > wall.x && playerPosition.x - diameterPlayer/2 < wall.x + wall.w && 
+        playerPosition.y + diameterPlayer/2 > wall.y && playerPosition.y - diameterPlayer/2 < wall.y + wall.l){//in wall 
+      if(playerPosition.x < wall.x){ 
+        playerPosition.x = wall.x - diameterPlayer/2;
+      }
+      if(playerPosition.x > wall.x + wall.w){
+        playerPosition.x = wall.x + wall.w + diameterPlayer/2;
+      }
+      if(playerPosition.y < wall.y){
+        playerPosition.y = wall.y - diameterPlayer/2;
+      }
+      if(playerPosition.y > wall.y + wall.l){
+        playerPosition.y = wall.y + wall.l + diameterPlayer/2;
+      }
+    }
   }
 }
 
@@ -273,6 +312,6 @@ function keyPressed(){
 
 // steps:
 // p5 party
-// bullet and player collisions
+// playerPosition and player collisions
 // sound effects
 
