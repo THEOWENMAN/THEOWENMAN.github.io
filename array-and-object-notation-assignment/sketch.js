@@ -11,7 +11,6 @@ let state = "start";
 let playerPosition;
 
 let instructionsBG;
-// let mapTwoBG;
 let mapOneBG;
 let startBG;
 let audioBulletShot;
@@ -36,21 +35,11 @@ let wallsMapOne = [
   {x: 950, y: 500, w: 225, l: 25},
 ];
 
-// let wallsMapTwo = [
-//   {x: 250, y: 400, w: 100, l: 30},
-//   {x: 400, y: 400, w: 100, l: 30},
-//   {x: 550, y: 400, w: 100, l: 30},
-//   {x: 700, y: 400, w: 100, l: 30},
-//   {x: 850, y: 400, w: 100, l: 30},
-//   {x: 1000, y: 400, w: 100, l: 30},
-//   {x: 1150, y: 400, w: 100, l: 30},
-// ];
 
 //
 function preload() {
   startBG = loadImage("startBG.png"); 
   mapOneBG = loadImage("background_1.avif");
-  // mapTwoBG = loadImage("background_2.jpg");
   instructionsBG = loadImage("instructionsBG.avif");
   audioBulletShot = createAudio("laser-312360.mp3");
 
@@ -92,7 +81,7 @@ function draw() {
 // draw player and others
 function drawOtherPlayers(){
   for (let guest of guests){
-    fill("blue");
+    fill("green");
     circle(guest.x, guest.y, diameterPlayer);
     console.log(playerPosition.x, playerPosition.y);
   }
@@ -147,24 +136,9 @@ function mapOne(){
   wallDetectionBullet();
   wallDetectionPlayer();
   canvasDetectionBullet();
-  playersHitDetection();
+
 }
 
-// function mapTwo(){
-//   background(mapTwoBG);
-//   drawMePlayer();
-//   drawOtherPlayers();
-//   move();
-//   for (let bullet of shared.bulletsArray){
-//     drawBullet(bullet);
-//     moveBullet(bullet);
-//   }
-//   drawBarriersMapTwo();
-//   wallDetectionBullet();
-//   wallDetectionPlayer();
-//   canvasDetectionBullet();
-//   playersHitDetection();
-// }
 
 function startButtons(){
   fill(255);
@@ -176,7 +150,7 @@ function startButtons(){
   text("MAP1", width/2-300+125, height/2+50); 
   text("INFO", width/2+50+125, height/2+50);
 }
-// remove the map 2 
+
 
 
 
@@ -218,10 +192,6 @@ function mousePressed(){
       state = "mapOne";
       return;
     }
-    // if (mouseX > width/2-130 && mouseX < width/2-130+250 && mouseY > height/2 && mouseY <height/2+100){
-    //   state = "mapTwo";
-    //   return;
-    // }
     if (mouseX > width/2+50 && mouseX < width/2+50+250 && mouseY > height/2 && mouseY <height/2+100){
       state = "instructions";
       return;
@@ -243,20 +213,11 @@ function drawBarriersMapOne(){
   }
 }
 
-// function drawBarriersMapTwo(){
-//   fill("black");
-//   for (let wall of wallsMapTwo){
-//     rect(wall.x, wall.y, wall.w, wall.l);
-//   }
-// }
 
 function wallDetectionBullet(){
   if (state === "mapOne"){
     walls = wallsMapOne;
   }
-  // else if (state === "mapTwo"){
-  //   walls = wallsMapTwo;
-  // }
   for (let i = shared.bulletsArray.length - 1; i >= 0; i--){
     let bullet = shared.bulletsArray[i];
     for (let wall of walls){
@@ -287,9 +248,6 @@ function wallDetectionPlayer(){
   if (state === "mapOne"){
     walls = wallsMapOne;
   }
-  // else if (state === "mapTwo"){
-  //   walls = wallsMapTwo;
-  // }
   for(let wall of walls){
     if (playerPosition.x + diameterPlayer/2 > wall.x && playerPosition.x - diameterPlayer/2 < wall.x + wall.w && 
         playerPosition.y + diameterPlayer/2 > wall.y && playerPosition.y - diameterPlayer/2 < wall.y + wall.l){
@@ -309,34 +267,18 @@ function wallDetectionPlayer(){
   }
 }
 
-function playersHitDetection(){
-  for (let i = shared.bulletsArray.lengh - 1; i >=0; i--){
-    let bullet = shared.bulletsArray[i];
-    let d = dist(bullet.pos.x, bullet.pos.y, playerPosition.x, playerPosition.y);
-    if (d < diameterPlayer/2 + diameterBullet/2){
-      playerPosition.x = random(width);
-      playerPosition.y = random(height);
-    }
-    let index = shared.bulletsArray.indexOf(bullet);
-    shared.bulletsArray.splice(index,1);
+// function playersHitDetection(){
+//   for (let bullet of shared.bulletsArray){
+//     let d = dist(bullet.pos.x, bullet.pos.y, playerPosition.x, playerPosition.y);
+//     if (d < diameterPlayer/2 + diameterBullet/2){
+//       playerPosition.x = random(width);
+//       playerPosition.y = random(height);
+//     }
+//     // let index = shared.bulletsArray.indexOf(bullet);
+//     // shared.bulletsArray.splice(index,1);
 
-  }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+//   }
+// }
 
 
 
@@ -375,9 +317,6 @@ function keyPressed(){
   if(keyCode === 49){//1
     state = "mapOne";
   }
-  // if(keyCode === 50){//2
-  //   state = "mapTwo";
-  // }
   if(keyCode===73){//i
     state = "instructions";
   }
