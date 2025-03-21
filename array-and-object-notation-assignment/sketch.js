@@ -1,29 +1,18 @@
-// Project Title
-// Your Name
-// Date
-//
-// Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// Array and object Notation assignment: 2D Brawl Stars part 1
+// Owen Tang
+// March 20, 2025
+// Extra for Experts: I coded the bullets using createVectors and attempted p5 party and "worked/2"
 
 
-//
+// Define global variables
+let bulletsArray = [];
+let enemyArray = [];
 let state = "start";
 let playerPosition;
-
-let instructionsBG;
-let mapOneBG;
-let startBG;
-let audioBulletShot;
-let walls;
-
-let me;
-let guests;
-let shared;
-
-const movement = 3;
-const diameterPlayer = 20;
-const diameterBullet = 5;
-
+let instructionsBG, mapOneBG, startBG, audioBulletShot;
+let pos;
+let freezeDuration;
+let x, y, dx, dy, r, g, b;
 let wallsMapOne = [
   {x: 550, y: 150, w: 25, l: 200},
   {x: 350, y: 350, w: 225, l: 25},
@@ -35,31 +24,34 @@ let wallsMapOne = [
   {x: 950, y: 500, w: 225, l: 25},
 ];
 
+// Define constants
+const MOVEMENT = 3;
+const DIAMETERPLAYER = 20;
+const DIAMETERBULLET = 5;
+const DIAMETERENEMY = 40;
 
-//
+// Loads the images/bgimages and audio into the code
 function preload() {
   startBG = loadImage("startBG.png"); 
   mapOneBG = loadImage("background_1.avif");
   instructionsBG = loadImage("instructionsBG.avif");
   audioBulletShot = createAudio("laser-312360.mp3");
-
-  partyConnect("wss://demoserver.p5party.org", "array-and-object-notation-assignment");
-  me = partyLoadMyShared({ x: random (100,500), y: random(100,500) });
-  guests = partyLoadGuestShareds();
-  shared = partyLoadShared("shared", {bulletsArray: []});
 }
 
-// 
+// Allows the canvas and window to be resized
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
+}
+
+// Sets up the canvas and player's position with a vector
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  playerPosition = createVector(me.x, me.y);
+  freezeDuration = millis() + 3000;
+  playerPosition = createVector(random(500,1000), random(500,1000));
 }
 
-//
+// Run the three different screens based on state variable
 function draw() {
-  me.x = playerPosition.x;
-  me.y = playerPosition.y;
-
   if (state === "start"){
     startScreen();
   }
@@ -69,39 +61,12 @@ function draw() {
   else if (state === "mapOne"){
     mapOne();
   }
-  else if (state === "mapTwo"){
-    mapTwo();
-  }
-
-}
-
-
-
-
-// draw player and others
-function drawOtherPlayers(){
-  for (let guest of guests){
-    fill("green");
-    circle(guest.x, guest.y, diameterPlayer);
-    console.log(playerPosition.x, playerPosition.y);
+  else if (state === "lose"){
+    loseScreen();
   }
 }
 
-function drawMePlayer(){
-  fill("green");
-  circle(playerPosition.x, playerPosition.y, diameterPlayer);
-}
-
-
-
-
-
-
-
-
-
-
-// screens
+// Start Screen Page: Start screen with the start and instruction buttons
 function startScreen(){
   image(startBG, 0, 0, width, height);
   startButtons();
@@ -111,6 +76,7 @@ function startScreen(){
   text("2D BRAWL STARS", width/2, height/4);
 }
 
+// Instruction page: Includes different instructions expressed with text
 function instructions(){
   image(instructionsBG, 0, 0, width, height);
   fill("black");
@@ -123,23 +89,40 @@ function instructions(){
   text("1 = map1, m = main menu, i = instructions", width/2, height/2+200); 
 }
 
+// Lose Page: Includes the lose screen when hit by enemy
+function loseScreen(){
+  background("black");
+  fill("red");
+  textSize(100);
+  textAlign(CENTER,CENTER);
+  text("YOU LOSE!", width/2, height/2);
+  textSize(50);
+  text("Refresh to restart", width/2, height/2 + 100);
+}
+
+// Game page/Map: Includes the map, player, detections and bullets.
 function mapOne(){
   background(mapOneBG);
   drawMePlayer();
-  drawOtherPlayers();
+  if(millis() > freezeDuration && enemyArray.length === 0){
+    spawnEnemies();
+  }
+  drawEnemyBalls();
   move();
-  for (let bullet of shared.bulletsArray){
+  moveEnemies();
+  playerDetectionEnemy();
+  bulletDetectionEnemy();
+  drawBarriersMapOne();
+  wallDetectionPlayer();
+  canvasDetectionBullet();
+  wallDetectionBullet();
+  for (let bullet of bulletsArray){
     drawBullet(bullet);
     moveBullet(bullet);
   }
-  drawBarriersMapOne();
-  wallDetectionBullet();
-  wallDetectionPlayer();
-  canvasDetectionBullet();
-
 }
 
-
+// Buttons for the start Screen
 function startButtons(){
   fill(255);
   rect(width/2-300, height/2, 250, 100);
@@ -151,41 +134,73 @@ function startButtons(){
   text("INFO", width/2+50+125, height/2+50);
 }
 
+// ---Draw zone/section---
+// Draws the player
+function drawMePlayer(){
+  fill("blue");
+  circle(playerPosition.x, playerPosition.y, DIAMETERPLAYER);
+}
 
+// Draws the bullets
+function drawBullet(bullet){
+  fill("red");
+  circle(bullet.pos.x, bullet.pos.y, DIAMETERBULLET); 
+}
 
+// Draws the barriers/walls
+function drawBarriersMapOne(){
+  fill("black");
+  for (let wall of wallsMapOne){
+    rect(wall.x, wall.y, wall.w, wall.l);
+  }
+}
 
+// Draws the enemy balls
+function drawEnemyBalls(enemy){
+  for (let enemy of enemyArray){
+    fill(enemy.r, enemy.g, enemy.b);
+    circle(enemy.x, enemy.y, DIAMETERENEMY);
+  }
+}
 
-// bullets
+// Function to spawn enemies
+function spawnEnemies(){
+  for (let i = 0; i < 15; i++){
+    let enemy = {
+      x: random(0, 500),
+      y: random(0, 500),
+      dy: random(-5, 5),
+      dx: random(-5, 5),
+      r: random(0, 255),
+      g: random(0, 255),
+      b: random(0, 255),
+    };
+    enemyArray.push(enemy);
+  }
+}
+
+// ---Bullets zone/section---
+// Function creates bullet based on position of mouse and pushes bullets based on vector
 function spawnBullet(){
   let direction = createVector(mouseX - playerPosition.x, mouseY - playerPosition.y);
   direction.normalize();
   direction.mult(4);
-  
-  
   let position = createVector(playerPosition.x, playerPosition.y);
-  position.x += direction.x * (diameterPlayer/4);
-  position.y += direction.y * (diameterPlayer/4);
-
+  position.x += direction.x * (DIAMETERPLAYER/4);
+  position.y += direction.y * (DIAMETERPLAYER/4);
   let bullet = {
-    pos: {x: position.x, y: position.y},
-    vel: {x: direction.x, y: direction.y},
+    pos: position,
+    vel: direction,
   };
-  shared.bulletsArray.push(bullet);
+  bulletsArray.push(bullet);
 }
 
+// moves the bullet
 function moveBullet(bullet){
-  bullet.pos.x += bullet.vel.x;
-  bullet.pos.y += bullet.vel.y;
-  
+  bullet.pos.add(bullet.vel);
 }
 
-function drawBullet(bullet){
-  fill("red");
-  circle(bullet.pos.x, bullet.pos.y, diameterBullet); 
-}
-
-
-
+// Mouse clicks buttons start and instructions, and for spawning bullet and sound
 function mousePressed(){
   if (state === "start"){
     if (mouseX > width/2-300 && mouseX < width/2-300+250 && mouseY > height/2 && mouseY <height/2+100){
@@ -204,116 +219,134 @@ function mousePressed(){
   }
 }
 
-
-
-function drawBarriersMapOne(){
-  fill("black");
-  for (let wall of wallsMapOne){
-    rect(wall.x, wall.y, wall.w, wall.l);
-  }
-}
-
-
+// ---Detection zone/section---
+// If wall detects bullet then bullet gets spliced
 function wallDetectionBullet(){
-  if (state === "mapOne"){
-    walls = wallsMapOne;
-  }
-  for (let i = shared.bulletsArray.length - 1; i >= 0; i--){
-    let bullet = shared.bulletsArray[i];
-    for (let wall of walls){
-      if (bullet.pos.x + diameterBullet/2 > wall.x && 
-        bullet.pos.x + diameterBullet/2 < wall.x + wall.w && 
-        bullet.pos.y + diameterBullet/2 > wall.y && 
-        bullet.pos.y + diameterBullet/2 < wall.y + wall.l){
-        let index = shared.bulletsArray.indexOf(bullet);
-        shared.bulletsArray.splice(index,1);
+  for (let i = bulletsArray.length - 1; i >= 0; i--){
+    let bullet = bulletsArray[i];
+    for (let wall of wallsMapOne){
+      if (bullet.pos.x + DIAMETERBULLET/2 > wall.x && 
+        bullet.pos.x + DIAMETERBULLET/2 < wall.x + wall.w && 
+        bullet.pos.y + DIAMETERBULLET/2 > wall.y && 
+        bullet.pos.y + DIAMETERBULLET/2 < wall.y + wall.l){
+        let index = bulletsArray.indexOf(bullet);
+        bulletsArray.splice(index,1);
       }
     }
   }
 }
 
+// If canvas detects bullet then bullet gets spliced
 function canvasDetectionBullet(){
-  for (let i = shared.bulletsArray.length - 1; i >= 0; i --){
-    let bullet = shared.bulletsArray[i];
-    if(bullet.pos.x + diameterBullet/2 > width || bullet.pos.x - diameterBullet/2 < 0 || 
-      bullet.pos.y + diameterBullet/2 > height || bullet.pos.y - diameterBullet/2 < 0){
-      let index = shared.bulletsArray.indexOf(bullet);
-      shared.bulletsArray.splice(index,1);
+  for (let i = bulletsArray.length - 1; i >= 0; i --){
+    let bullet = bulletsArray[i];
+    if(bullet.pos.x + DIAMETERBULLET/2 > width || bullet.pos.x - DIAMETERBULLET/2 < 0 || 
+      bullet.pos.y + DIAMETERBULLET/2 > height || bullet.pos.y - DIAMETERBULLET/2 < 0){
+      let index = bulletsArray.indexOf(bullet);
+      bulletsArray.splice(index,1);
     }
   }
 }
 
-
+// If wall detects player, player is pushed back
 function wallDetectionPlayer(){
   if (state === "mapOne"){
     walls = wallsMapOne;
   }
   for(let wall of walls){
-    if (playerPosition.x + diameterPlayer/2 > wall.x && playerPosition.x - diameterPlayer/2 < wall.x + wall.w && 
-        playerPosition.y + diameterPlayer/2 > wall.y && playerPosition.y - diameterPlayer/2 < wall.y + wall.l){
+    if (playerPosition.x + DIAMETERPLAYER/2 > wall.x && playerPosition.x - DIAMETERPLAYER/2 < wall.x + wall.w && 
+        playerPosition.y + DIAMETERPLAYER/2 > wall.y && playerPosition.y - DIAMETERPLAYER/2 < wall.y + wall.l){
       if(playerPosition.x < wall.x){ 
-        playerPosition.x = wall.x - diameterPlayer/2;
+        playerPosition.x = wall.x - DIAMETERPLAYER/2;
       }
       if(playerPosition.x > wall.x + wall.w){
-        playerPosition.x = wall.x + wall.w + diameterPlayer/2;
+        playerPosition.x = wall.x + wall.w + DIAMETERPLAYER/2;
       }
       if(playerPosition.y < wall.y){
-        playerPosition.y = wall.y - diameterPlayer/2;
+        playerPosition.y = wall.y - DIAMETERPLAYER/2;
       }
       if(playerPosition.y > wall.y + wall.l){
-        playerPosition.y = wall.y + wall.l + diameterPlayer/2;
+        playerPosition.y = wall.y + wall.l + DIAMETERPLAYER/2;
       }
     }
   }
 }
 
-// function playersHitDetection(){
-//   for (let bullet of shared.bulletsArray){
-//     let d = dist(bullet.pos.x, bullet.pos.y, playerPosition.x, playerPosition.y);
-//     if (d < diameterPlayer/2 + diameterBullet/2){
-//       playerPosition.x = random(width);
-//       playerPosition.y = random(height);
-//     }
-//     // let index = shared.bulletsArray.indexOf(bullet);
-//     // shared.bulletsArray.splice(index,1);
+// If player detects enemy, state turns to lose
+function playerDetectionEnemy(){
+  for (let enemy of enemyArray){
+    let distanceToEnemy = dist(playerPosition.x, playerPosition.y, enemy.x, enemy.y);
+    if (distanceToEnemy< DIAMETERPLAYER/2 + DIAMETERENEMY/2){
+      state = "lose";
+    }
+  }
+}
 
-//   }
-// }
+// If bullet detects enemy, it teleports enemy to random place
+function bulletDetectionEnemy(){
+  for (let enemy of enemyArray){
+    for (let bullet of bulletsArray){
+      let distanceToBullet = dist(bullet.pos.x, bullet.pos.y, enemy.x, enemy.y);
+      if (distanceToBullet < DIAMETERBULLET/2 + DIAMETERENEMY/2){
+        enemy.x = random(width);
+        enemy.y = random(height);
+      }
+    }
+  }
+}
 
-
-
-//top and bottom code
-
+// WASD movement and restricts player in canvas
 function move(){
   if (keyIsDown(87)||keyIsDown(UP_ARROW)) {//w
-    playerPosition.y-=movement;
+    playerPosition.y-=MOVEMENT;
   }
   if (keyIsDown(65)||keyIsDown(LEFT_ARROW)) {//a
-    playerPosition.x-=movement;
+    playerPosition.x-=MOVEMENT;
   }
   if (keyIsDown(83)||keyIsDown(DOWN_ARROW)) {//s
-    playerPosition.y+=movement;
+    playerPosition.y+=MOVEMENT;
   }
   if (keyIsDown(68)||keyIsDown(RIGHT_ARROW)) {//d
-    playerPosition.x+=movement;
+    playerPosition.x+=MOVEMENT;
   }
   
-  if (playerPosition.x + diameterPlayer/2 > width){
-    playerPosition.x = width - diameterPlayer/2;
+  if (playerPosition.x + DIAMETERPLAYER/2 > width){
+    playerPosition.x = width - DIAMETERPLAYER/2;
   } 
-  else if (playerPosition.x - diameterPlayer/2 < 0){
-    playerPosition.x = diameterPlayer/2;
+  else if (playerPosition.x - DIAMETERPLAYER/2 < 0){
+    playerPosition.x = DIAMETERPLAYER/2;
   } 
-  else if (playerPosition.y + diameterPlayer/2 > height){
-    playerPosition.y = height - diameterPlayer/2;
+  else if (playerPosition.y + DIAMETERPLAYER/2 > height){
+    playerPosition.y = height - DIAMETERPLAYER/2;
   } 
-  else if (playerPosition.y - diameterPlayer/2 < 0){
-    playerPosition.y = diameterPlayer/2;
+  else if (playerPosition.y - DIAMETERPLAYER/2 < 0){
+    playerPosition.y = DIAMETERPLAYER/2;
   } 
 }
 
-function keyPressed(){
+// Moves the enemies in random positions
+function moveEnemies(enemy){
+  for (let enemy of enemyArray){
+    enemy.x += enemy.dx;
+    enemy.y += enemy.dy;
 
+    if (enemy.x - DIAMETERPLAYER/2 > width){
+      enemy.x = -DIAMETERPLAYER/2 ;
+    } 
+    else if (enemy.x+DIAMETERPLAYER/2 < 0){
+      enemy.x = width + DIAMETERPLAYER/2 ;
+    } 
+    else if (enemy.y - DIAMETERPLAYER/2 > height){
+      enemy.y = -DIAMETERPLAYER/2 ;
+    } 
+    else if (enemy.y + DIAMETERPLAYER/2 < 0){
+      enemy.y = height + DIAMETERPLAYER/2 ;
+    } 
+  }
+}
+
+// If letters are pressed, different screens show 
+function keyPressed(){
   if(keyCode === 49){//1
     state = "mapOne";
   }
@@ -326,15 +359,10 @@ function keyPressed(){
 }
 
 
-function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-}
 
-// steps:
-// p5 party
-// https://p5party.org/examples/tanks/
-// if party cannot work make 2-3 balls bounce random and when bullet hit they splice or something. 
 
-// example select something
+
+
+
 
 
