@@ -6,6 +6,7 @@
 - [Perlin Noise Demo](perlin)
 - [Terrain Generation](terrain)
 - [Bubble Object Notation](bubbles)
+- [2D Array Grid](grid)
 
 # CS30 Projects
 - [Interactive Scene](interactive-scene)
