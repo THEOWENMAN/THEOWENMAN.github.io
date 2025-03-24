@@ -1,17 +1,5 @@
-// 2D Array Grid Demo
-// Your Name
-// Date
-//
-// Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// 2D Grid Neighbours Demo
 
-// let grid = [[0,1,1,0],
-//             [1,1,0,0],
-//             [0,0,1,1],
-//             [0,1,0,0],
-// ];
-
-// const CELL_SIZE = 200; // do this if you are just choosing the size
 let cellSize;
 const SQUARE_DIMENTIONS = 10;
 let grid;
@@ -88,16 +76,33 @@ function genereateRandomGrid(cols, rows){
 function mousePressed(){
   let x = Math.floor(mouseX/cellSize);
   let y = Math.floor(mouseY/cellSize);
+
+  //self
   toggleCell(x,y);
+
+  //Neighbours
+  toggleCell(x + 1,y);
+  toggleCell(x, y + 1);
+  toggleCell(x - 1,y);
+  toggleCell(x, y - 1);
+  
 }
 // y first then x
 function toggleCell(x,y){
-  if (grid[y][x] === 0 ){
-    grid[y][x] = 1;
+  // make sure cell you are toggling is actually in the grid
+
+  if (x >= 0 && x < SQUARE_DIMENTIONS && y >= 0 && y < SQUARE_DIMENTIONS){
+    if (grid[y][x] === 0 ){
+      grid[y][x] = 1;
+    }
+    else if (grid[y][x] === 1 ){
+      grid[y][x] = 0;
+    }
   }
-  else if (grid[y][x] === 1 ){
-    grid[y][x] = 0;
-  }
+
+
+
+  
 }
 
 
