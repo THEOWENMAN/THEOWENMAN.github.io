@@ -9,7 +9,7 @@
 let board;
 
 
-const CELL_SIZE = 100;
+const CELL_SIZE = 90;
 const ROWS_COLS = 8;
 
 function preload(){
@@ -35,7 +35,7 @@ function displayBoard(){
       else if (board[y][x] === 1){
         fill("black");
       }
-      square(x*CELL_SIZE+335,y*CELL_SIZE+45, CELL_SIZE);
+      square(x*CELL_SIZE,y*CELL_SIZE, CELL_SIZE);
     }
   }
 }
