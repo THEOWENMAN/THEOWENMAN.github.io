@@ -6,36 +6,76 @@
 // - describe what you did to take this project "above and beyond"
 
 
-let board;
+
+//let board;
+
+let board = [
+  [0,"g",0,"g",0,"g",0,"g"],
+  ["g",0,"g",0,"g",0,"g",0],
+  [0,"g",0,"g",0,"g",0,"g"],
+  [1,0,1,0,1,0,1,0],
+  [0,1,0,1,0,1,0,1],
+  ["b",0,"b",0,"b",0,"b",0],
+  [0,"b",0,"b",0,"b",0,"b"],
+  ["b",0,"b",0,"b",0,"b",0],
+];
 
 
-const CELL_SIZE = 90;
+
+const CELL_SIZE = 80;
 const ROWS_COLS = 8;
+const OPEN_TILE = 0;
+const IMPASSIBLE = 1;
+
+let redPeices = {
+  x: 0,
+  y: 0,
+};
+
+let blackPeices = {
+
+};
 
 function preload(){
 
 }
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+  createCanvas(CELL_SIZE*ROWS_COLS, CELL_SIZE*ROWS_COLS);
   board = generateBoard(ROWS_COLS, ROWS_COLS);
 }
 
 function draw() {
-  background(144,238,144);
+  background(255);
   displayBoard();
+  displayPeices();
 }
 
 function displayBoard(){
   for(let y = 0; y < ROWS_COLS; y++){
-    for(let x =0; x < ROWS_COLS; x++){
+    for(let x = 0; x < ROWS_COLS; x++){
       if(board[y][x] === 0){
-        fill("red");
-      }
-      else if (board[y][x] === 1){
         fill("black");
       }
+      else if (board[y][x] === 1){
+        fill("red");
+      }
       square(x*CELL_SIZE,y*CELL_SIZE, CELL_SIZE);
+    }
+  }
+}
+
+function displayPeices(){
+  for(let y = 0; y < ROWS_COLS; y++){
+    for(let x = 0; x < ROWS_COLS; x++){
+      if (board[y][x] === "b"){
+        fill("blue");
+        circle(x*CELL_SIZE,y*CELL_SIZE,50);
+      }
+      else if (board[y][x] === "g"){
+        fill("green");
+        circle(x*CELL_SIZE,y*CELL_SIZE,50);
+      }
     }
   }
 }
