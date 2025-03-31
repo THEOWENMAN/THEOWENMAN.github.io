@@ -92,8 +92,8 @@ function generatePieces(){
 }
 
 function mousePressed(){
-  let x = math.floor(mouseX/CELL_SIZE);
-  let y = math.floor(mouseY/CELL_SIZE);
+  let x = Math.floor(mouseX/CELL_SIZE);
+  let y = Math.floor(mouseY/CELL_SIZE);
 
   selectPeice(x,y);
 
