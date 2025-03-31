@@ -8,7 +8,7 @@
 
 
 let board;
-let pieces = [];
+let pieces;
 let state = false;
 
 const CELL_SIZE = 80;
@@ -24,7 +24,7 @@ function preload(){
 function setup() {
   createCanvas(CELL_SIZE*ROWS_COLS, CELL_SIZE*ROWS_COLS);
   board = generateBoard(ROWS_COLS, ROWS_COLS);
-  generatePieces();
+  pieces = generatePieces(ROWS_COLS, ROWS_COLS);
 }
 
 function draw() {
@@ -48,9 +48,16 @@ function displayBoard(){
 }
 
 function displayPieces(){
-  for(let piece of pieces){
-    fill(peice.color);
-    circle(peice.x * CELL_SIZE+CELL_SIZE/2, peice.y*CELL_SIZE+CELL_SIZE/2, 50);
+  for(let y = 0; y < ROWS_COLS; y++){
+    for(let x = 0; x < ROWS_COLS; x++){
+      if(pieces[y][x] === 2){
+        fill("red");
+      }
+      else if(pieces[y][x] === 3){
+        fill("black");
+      }
+      circle(x * CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2, 50);
+    }
   }
 }
 
@@ -74,20 +81,22 @@ function generateBoard(){
 }
 
 function generatePieces(){
-  for (let y = 0; y < 3; y++){
+  let newPieces = [];
+  for (let y = 0; y < ROWS_COLS; y++){
+    newPieces.push([]);
     for (let x = 0; x < ROWS_COLS; x++){
-      if ((x+y) % 2 !== 0){
-        pieces.push({x:x, y:y, color: "red" });
+      if ((x+y) % 2 !== 0 && y > 0 && y < 3){
+        newPieces[y].push(2);
+      }
+      if ((x+y) % 2 !== 0 && y > 5 && y < 8){
+        newPieces[y].push(3);
       }
     }
   }
-  for (let y = 5; y < 8; y++){
-    for (let x = 0; x < ROWS_COLS; x++){
-      if ((x+y) % 2 !== 0){
-        pieces.push({x:x, y:y, color: "black" });
-      }
-    }
-  }
+
+
+  // create this into one big array and places with not 2 or 3 is 0
+  return newPieces;
 
 }
 
@@ -99,7 +108,7 @@ function mousePressed(){
 
 }
 
-function selectPeice(){
+function selectPeice(x,y){
   if (x >= 0 && x < CELL_SIZE && y >= 0 && y < CELL_SIZE){
     
   }
