@@ -7,34 +7,15 @@
 
 
 
-//let board;
-
-let board = [
-  [0,"g",0,"g",0,"g",0,"g"],
-  ["g",0,"g",0,"g",0,"g",0],
-  [0,"g",0,"g",0,"g",0,"g"],
-  [1,0,1,0,1,0,1,0],
-  [0,1,0,1,0,1,0,1],
-  ["b",0,"b",0,"b",0,"b",0],
-  [0,"b",0,"b",0,"b",0,"b"],
-  ["b",0,"b",0,"b",0,"b",0],
-];
-
-
+let board;
+let pieces = [];
+let state = false;
 
 const CELL_SIZE = 80;
 const ROWS_COLS = 8;
 const OPEN_TILE = 0;
 const IMPASSIBLE = 1;
 
-let redPeices = {
-  x: 0,
-  y: 0,
-};
-
-let blackPeices = {
-
-};
 
 function preload(){
 
@@ -43,40 +24,33 @@ function preload(){
 function setup() {
   createCanvas(CELL_SIZE*ROWS_COLS, CELL_SIZE*ROWS_COLS);
   board = generateBoard(ROWS_COLS, ROWS_COLS);
+  generatePieces();
 }
 
 function draw() {
   background(255);
   displayBoard();
-  displayPeices();
+  displayPieces();
 }
 
 function displayBoard(){
   for(let y = 0; y < ROWS_COLS; y++){
     for(let x = 0; x < ROWS_COLS; x++){
       if(board[y][x] === 0){
-        fill("black");
+        fill("grey");
       }
       else if (board[y][x] === 1){
-        fill("red");
+        fill("white");
       }
       square(x*CELL_SIZE,y*CELL_SIZE, CELL_SIZE);
     }
   }
 }
 
-function displayPeices(){
-  for(let y = 0; y < ROWS_COLS; y++){
-    for(let x = 0; x < ROWS_COLS; x++){
-      if (board[y][x] === "b"){
-        fill("blue");
-        circle(x*CELL_SIZE,y*CELL_SIZE,50);
-      }
-      else if (board[y][x] === "g"){
-        fill("green");
-        circle(x*CELL_SIZE,y*CELL_SIZE,50);
-      }
-    }
+function displayPieces(){
+  for(let piece of pieces){
+    fill(peice.color);
+    circle(peice.x * CELL_SIZE+CELL_SIZE/2, peice.y*CELL_SIZE+CELL_SIZE/2, 50);
   }
 }
 
@@ -97,4 +71,36 @@ function generateBoard(){
     isColor = !isColor;
   }
   return newBox;
+}
+
+function generatePieces(){
+  for (let y = 0; y < 3; y++){
+    for (let x = 0; x < ROWS_COLS; x++){
+      if ((x+y) % 2 !== 0){
+        pieces.push({x:x, y:y, color: "red" });
+      }
+    }
+  }
+  for (let y = 5; y < 8; y++){
+    for (let x = 0; x < ROWS_COLS; x++){
+      if ((x+y) % 2 !== 0){
+        pieces.push({x:x, y:y, color: "black" });
+      }
+    }
+  }
+
+}
+
+function mousePressed(){
+  let x = math.floor(mouseX/CELL_SIZE);
+  let y = math.floor(mouseY/CELL_SIZE);
+
+  selectPeice(x,y);
+
+}
+
+function selectPeice(){
+  if (x >= 0 && x < CELL_SIZE && y >= 0 && y < CELL_SIZE){
+    
+  }
 }
