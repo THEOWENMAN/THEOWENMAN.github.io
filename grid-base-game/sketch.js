@@ -42,6 +42,9 @@ function displayBoard(){
       else if (board[y][x] === 1){
         fill("white");
       }
+      else if (board[y][x] === 5){
+        fill("green");
+      }
       square(x*CELL_SIZE,y*CELL_SIZE, CELL_SIZE);
     }
   }
@@ -108,12 +111,15 @@ function mousePressed(){
   let x = Math.floor(mouseX/CELL_SIZE);
   let y = Math.floor(mouseY/CELL_SIZE);
 
-  selectPeice(x,y);
+  selectPiece(x,y);
 
 }
 
-function selectPeice(x,y){
+function selectPiece(x,y){
   if (x >= 0 && x < CELL_SIZE && y >= 0 && y < CELL_SIZE){
-    
+    if(pieces[y][x] === 3){
+      board[y - 1][x + 1] = 5;
+      board[y - 1][x - 1] = 5;
+    }
   }
 }
