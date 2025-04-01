@@ -52,30 +52,28 @@ function displayPieces(){
     for(let x = 0; x < ROWS_COLS; x++){
       if(pieces[y][x] === 2){
         fill("red");
+        circle(x * CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2, 50);
       }
       else if(pieces[y][x] === 3){
         fill("black");
+        circle(x * CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2, 50);
       }
-      circle(x * CELL_SIZE+CELL_SIZE/2, y*CELL_SIZE+CELL_SIZE/2, 50);
     }
   }
 }
 
 function generateBoard(){
-  let isColor = false;
   let newBox = [];
   for(let y = 0; y < ROWS_COLS; y++){
     newBox.push([]);
-    for(let x =0; x < ROWS_COLS; x++){
-      if(isColor){
-        newBox[y].push(0);
-      }
-      else{
+    for(let x = 0; x < ROWS_COLS; x++){
+      if((x + y) % 2 === 0){
         newBox[y].push(1);
       }
-      isColor = !isColor;
+      else{
+        newBox[y].push(0);
+      }
     }
-    isColor = !isColor;
   }
   return newBox;
 }
@@ -85,16 +83,22 @@ function generatePieces(){
   for (let y = 0; y < ROWS_COLS; y++){
     newPieces.push([]);
     for (let x = 0; x < ROWS_COLS; x++){
-      if ((x+y) % 2 !== 0 && y > 0 && y < 3){
-        newPieces[y].push(2);
+      if ((x+y) % 2 !== 0){
+        if (y<3){
+          newPieces[y].push(2);
+        }
+        else if (y>4){
+          newPieces[y].push(3);
+        }
+        else {
+          newPieces[y].push(0);
+        }
       }
-      if ((x+y) % 2 !== 0 && y > 5 && y < 8){
-        newPieces[y].push(3);
+      else {
+        newPieces[y].push(0);
       }
     }
   }
-
-
   // create this into one big array and places with not 2 or 3 is 0
   return newPieces;
 
