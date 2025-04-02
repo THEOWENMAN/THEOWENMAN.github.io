@@ -116,10 +116,52 @@ function mousePressed(){
 }
 
 function selectPiece(x,y){
+  let oldX = x;
+  let oldY = y;
   if (x >= 0 && x < CELL_SIZE && y >= 0 && y < CELL_SIZE){
-    if(pieces[y][x] === 3){
+    if(pieces[y][x] === 3 && x === oldX && y === oldY){
       board[y - 1][x + 1] = 5;
       board[y - 1][x - 1] = 5;
     }
+    else {
+      resetPeiceSelectionColor();
+    }
+
+
+
+
+
+    // if(pieces[y][x] === 2){
+    //   board[y + 1][x - 1] = 5;
+    //   board[y + 1][x + 1] = 5;
+    // }
   }
 }
+
+
+function keyPressed(){
+  if(keyCode === 49){//1
+    resetPeiceSelectionColor();
+  }
+}
+function resetPeiceSelectionColor(){
+  for(let y = 0; y < ROWS_COLS; y++){
+    for(let x = 0; x < ROWS_COLS; x++){
+      if(board[y][x] === 5){
+        board[y][x] = 0;
+      }
+    
+    }
+    
+  }
+}
+
+// click on peice to put down, click on other piece put down, click anywhere or other piece put down
+
+
+
+// x and y vairbles to toggle off and on
+
+// border use css or javascript
+
+function movePeices(){}
