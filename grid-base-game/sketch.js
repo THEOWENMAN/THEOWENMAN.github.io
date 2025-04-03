@@ -9,7 +9,8 @@
 
 let board;
 let pieces;
-let state = false;
+let turn = "red";
+
 
 const CELL_SIZE = 80;
 const ROWS_COLS = 8;
@@ -116,35 +117,33 @@ function mousePressed(){
 }
 
 function selectPiece(x,y){
-  let oldX = x;
-  let oldY = y;
-  if (x >= 0 && x < CELL_SIZE && y >= 0 && y < CELL_SIZE){
-    if(pieces[y][x] === 3 && x === oldX && y === oldY){
+  if (x >= 0 && x < CELL_SIZE && y >= 0 && y < CELL_SIZE && turn === "black"){
+    if(pieces[y][x] === 3 && pieces[y-1][x+1] !==3){
       board[y - 1][x + 1] = 5;
+    }
+    if(pieces[y][x] === 3 && pieces[y-1][x-1] !==3){
       board[y - 1][x - 1] = 5;
     }
-    else {
-      resetPeiceSelectionColor();
+    if(pieces[y][x] !== 3){
+      resetPieceSelectionColor();
     }
-
-
-
-
-
-    // if(pieces[y][x] === 2){
-    //   board[y + 1][x - 1] = 5;
-    //   board[y + 1][x + 1] = 5;
-    // }
+  }
+  else if (x >= 0 && x < CELL_SIZE && y >= 0 && y < CELL_SIZE && turn === "red"){
+    if(pieces[y][x] === 2 && pieces[y+1][x-1] !==2){
+      board[y + 1][x - 1] = 5;
+    }
+    if(pieces[y][x] === 2 && pieces[y+1][x+1] !==2){
+      board[y + 1][x + 1] = 5;
+    }
+    if(pieces[y][x] !== 2){
+      resetPieceSelectionColor();
+    }
   }
 }
 
+// if turn and hightlight the piece clicked again should deselect or if another piece is click that old piece should deseletc 
 
-function keyPressed(){
-  if(keyCode === 49){//1
-    resetPeiceSelectionColor();
-  }
-}
-function resetPeiceSelectionColor(){
+function resetPieceSelectionColor(){
   for(let y = 0; y < ROWS_COLS; y++){
     for(let x = 0; x < ROWS_COLS; x++){
       if(board[y][x] === 5){
@@ -164,4 +163,8 @@ function resetPeiceSelectionColor(){
 
 // border use css or javascript
 
-function movePeices(){}
+function movePieces(){}
+// add turn on the right of the checker board
+// add king promotion rules if have time
+// better design of the checker peices and board maybe
+// screens, start, win, lose, etc
