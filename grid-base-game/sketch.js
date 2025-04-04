@@ -10,6 +10,8 @@
 let board;
 let pieces;
 let turn = "red";
+let state = "start";
+
 
 
 const CELL_SIZE = 80;
@@ -29,10 +31,30 @@ function setup() {
 }
 
 function draw() {
-  background(255);
+  if (state === "start"){
+    startScreen();
+  }
+  else if (state === "game"){
+    gameTime();
+  }
+  
+}
+
+
+function startScreen(){
+  background("lightgreen");
+}
+
+function gameTime(){
+  background(0);
   displayBoard();
   displayPieces();
 }
+
+
+
+
+
 
 function displayBoard(){
   for(let y = 0; y < ROWS_COLS; y++){
@@ -111,8 +133,10 @@ function generatePieces(){
 function mousePressed(){
   let x = Math.floor(mouseX/CELL_SIZE);
   let y = Math.floor(mouseY/CELL_SIZE);
-
+  
   selectPiece(x,y);
+
+  
 
 }
 
@@ -136,6 +160,9 @@ function selectPiece(x,y){
       board[y + 1][x + 1] = 5;
     }
     if(pieces[y][x] !== 2){
+      resetPieceSelectionColor();
+    }
+    if (number === 0 && piece[y][x] === x && piece[y][x] === y){
       resetPieceSelectionColor();
     }
   }
@@ -163,8 +190,37 @@ function resetPieceSelectionColor(){
 
 // border use css or javascript
 
-function movePieces(){}
+function movePieces(){
+
+
+}
 // add turn on the right of the checker board
 // add king promotion rules if have time
 // better design of the checker peices and board maybe
 // screens, start, win, lose, etc
+
+
+
+
+
+
+
+function movePlayer(x,y){
+
+  if(x >= 0 && x < cols && y >= 0 && y <= rows && grid[y][x] === OPEN_TILE){
+
+    // previous player location
+    let oldX = pieces.x;
+    let oldY = pieces.y;
+
+    // keep track of where the player is now
+    pieces.x = x;
+    pieces.y = y;
+
+    //reset the old spot to be open
+    board[oldY][oldX] = 0;
+
+    // put player on grid
+    board[piece.y][piece.x] = piece;
+  }
+}
