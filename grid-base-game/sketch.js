@@ -10,19 +10,15 @@
 let board;
 let pieces;
 let turn = "red";
-let state = "start";
-
-
+let state = "game";
+let selectedPiece = null;
 
 const CELL_SIZE = 80;
 const ROWS_COLS = 8;
 const OPEN_TILE = 0;
 const IMPASSIBLE = 1;
 
-
-function preload(){
-
-}
+function preload(){}
 
 function setup() {
   createCanvas(CELL_SIZE*ROWS_COLS, CELL_SIZE*ROWS_COLS);
@@ -40,7 +36,6 @@ function draw() {
   
 }
 
-
 function startScreen(){
   background("lightgreen");
 }
@@ -50,11 +45,6 @@ function gameTime(){
   displayBoard();
   displayPieces();
 }
-
-
-
-
-
 
 function displayBoard(){
   for(let y = 0; y < ROWS_COLS; y++){
@@ -125,50 +115,108 @@ function generatePieces(){
       }
     }
   }
-  // create this into one big array and places with not 2 or 3 is 0
   return newPieces;
-
 }
 
 function mousePressed(){
   let x = Math.floor(mouseX/CELL_SIZE);
   let y = Math.floor(mouseY/CELL_SIZE);
-  
+
+  if (x < 0 || x >= ROWS_COLS || y < 0 || y >= ROWS_COLS) {
+    return;
+  } 
+  if (board[y][x] === 5 && selectedPiece){
+    movePiece(selectedPiece.x, selectedPiece.y, x, y);
+    return;
+  }
   selectPiece(x,y);
-
-  
-
 }
 
 function selectPiece(x,y){
-  if (x >= 0 && x < CELL_SIZE && y >= 0 && y < CELL_SIZE && turn === "black"){
-    if(pieces[y][x] === 3 && pieces[y-1][x+1] !==3){
-      board[y - 1][x + 1] = 5;
-    }
-    if(pieces[y][x] === 3 && pieces[y-1][x-1] !==3){
-      board[y - 1][x - 1] = 5;
-    }
-    if(pieces[y][x] !== 3){
-      resetPieceSelectionColor();
-    }
+  let colorPiece = pieces[y][x];
+
+  if (turn === "red" && colorPiece !==2 || turn === "black" && colorPiece !== 3){
+    selectedPiece = null;
+    resetPieceSelectionColor();
+    return;
   }
-  else if (x >= 0 && x < CELL_SIZE && y >= 0 && y < CELL_SIZE && turn === "red"){
-    if(pieces[y][x] === 2 && pieces[y+1][x-1] !==2){
+  if (selectedPiece && selectedPiece.x === x && selectedPiece.y === y){
+    selectedPiece = null;
+    resetPieceSelectionColor();
+    return;
+  }
+  resetPieceSelectionColor();
+  selectedPiece = {
+    x,
+    y,
+  };
+  availableMoves(x,y);
+}
+
+function availableMoves(x,y){
+  if (pieces[y][x] === 2){
+    if( y + 1 < ROWS_COLS && x - 1 >= 0 && pieces[y + 1][x - 1] === 0){
       board[y + 1][x - 1] = 5;
     }
-    if(pieces[y][x] === 2 && pieces[y+1][x+1] !==2){
+    if( y + 1 < ROWS_COLS && x + 1 && pieces[y + 1][x + 1] === 0){
       board[y + 1][x + 1] = 5;
     }
-    if(pieces[y][x] !== 2){
-      resetPieceSelectionColor();
+
+    // capture moves
+    if(y + 2 < ROWS_COLS && x - 2 >= 0 && pieces[y + 1][x - 1] === 3 && pieces[y + 2][x - 2] === 0){
+      board[y + 2][x - 2] = 5;
     }
-    if (number === 0 && piece[y][x] === x && piece[y][x] === y){
-      resetPieceSelectionColor();
+
+    if(y + 2 < ROWS_COLS && x + 2 >= 0 && pieces[y + 1][x + 1] === 3 && pieces[y + 2][x + 2] === 0){
+      board[y + 2][x + 2] = 5;
     }
+  }
+  else if (pieces[y][x] === 3){
+    if( y - 1 < ROWS_COLS && x + 1 >= 0 && pieces[y - 1][x + 1] === 0){
+      board[y - 1][x + 1] = 5;
+    }
+    if( y - 1 < ROWS_COLS && x - 1 && pieces[y - 1][x - 1] === 0){
+      board[y - 1][x - 1] = 5;
+    }
+
+    // capture moves
+    if(y - 2 < ROWS_COLS && x - 2 >= 0 && pieces[y - 1][x +1] === 2 && pieces[y - 2][x + 2] === 0){
+      board[y - 2][x + 2] = 5;
+    }
+
+    if(y - 2 < ROWS_COLS && x - 2 >= 0 && pieces[y - 1][x - 1] === 2 && pieces[y - 2][x - 2] === 0){
+      board[y - 2][x - 2] = 5;
+    } 
   }
 }
 
-// if turn and hightlight the piece clicked again should deselect or if another piece is click that old piece should deseletc 
+function movePiece(oldX, oldY, x, y){
+  if(board[y][x] !== 5 && selectedPiece === null){
+    return;
+  }
+
+  let movingPiece = pieces[oldY][oldX];
+
+  pieces[y][x] = movingPiece;
+  pieces[oldY][oldX] = 0;
+
+  if(Math.abs(x - oldX) === 2 && Math.abs(y - oldY) === 2){
+    let captureX = (x + oldX) / 2;
+    let captureY = (y + oldY) / 2;
+    pieces[captureY][captureX] = 0;
+  }
+
+  selectedPiece = null;
+  resetPieceSelectionColor();
+  if (turn === "red"){
+    turn = "black";
+  }
+  else{
+    turn = "red";
+  }
+}
+
+
 
 function resetPieceSelectionColor(){
   for(let y = 0; y < ROWS_COLS; y++){
@@ -190,10 +238,7 @@ function resetPieceSelectionColor(){
 
 // border use css or javascript
 
-function movePieces(){
 
-
-}
 // add turn on the right of the checker board
 // add king promotion rules if have time
 // better design of the checker peices and board maybe
@@ -205,22 +250,3 @@ function movePieces(){
 
 
 
-function movePlayer(x,y){
-
-  if(x >= 0 && x < cols && y >= 0 && y <= rows && grid[y][x] === OPEN_TILE){
-
-    // previous player location
-    let oldX = pieces.x;
-    let oldY = pieces.y;
-
-    // keep track of where the player is now
-    pieces.x = x;
-    pieces.y = y;
-
-    //reset the old spot to be open
-    board[oldY][oldX] = 0;
-
-    // put player on grid
-    board[piece.y][piece.x] = piece;
-  }
-}
