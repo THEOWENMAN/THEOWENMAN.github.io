@@ -180,11 +180,11 @@ function availableMoves(x,y){
     }
 
     // capture moves
-    if(y - 2 < ROWS_COLS && x - 2 >= 0 && pieces[y - 1][x +1] === 2 && pieces[y - 2][x + 2] === 0){
+    if(y - 2 >= 0 && x + 2 < ROWS_COLS && pieces[y - 1][x + 1] === 2 && pieces[y - 2][x + 2] === 0){
       board[y - 2][x + 2] = 5;
     }
 
-    if(y - 2 < ROWS_COLS && x - 2 >= 0 && pieces[y - 1][x - 1] === 2 && pieces[y - 2][x - 2] === 0){
+    if(y - 2 > 0 && x - 2 >= 0 && pieces[y - 1][x - 1] === 2 && pieces[y - 2][x - 2] === 0){
       board[y - 2][x - 2] = 5;
     } 
   }
@@ -230,19 +230,13 @@ function resetPieceSelectionColor(){
   }
 }
 
-// click on peice to put down, click on other piece put down, click anywhere or other piece put down
 
 
 
-// x and y vairbles to toggle off and on
-
-// border use css or javascript
-
-
-// add turn on the right of the checker board
 // add king promotion rules if have time
 // better design of the checker peices and board maybe
 // screens, start, win, lose, etc
+
 
 
 
