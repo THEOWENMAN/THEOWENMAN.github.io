@@ -3,22 +3,30 @@
 // March 26, 2025
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// Implemented the null value, 
 
 
-
+// Declare global variables
 let board;
 let pieces;
-let turn = "red";
-let state = "game";
+let turn = "black";
+let state = "start";
 let selectedPiece = null;
+let movingSound;
 
+// Declare constants
 const CELL_SIZE = 80;
 const ROWS_COLS = 8;
-const OPEN_TILE = 0;
-const IMPASSIBLE = 1;
+const GREYSQUARE = 0;
+const WHITESQUARE = 1;
+const REDPIECE = 2;
+const BLACKPIECE = 3;
+const GREENSQUARE = 5;
 
-function preload(){}
+
+function preload(){
+  movingSound = createAudio("ficha-de-ajedrez-34722.mp3");
+}
 
 function setup() {
   createCanvas(CELL_SIZE*ROWS_COLS, CELL_SIZE*ROWS_COLS);
@@ -38,6 +46,18 @@ function draw() {
 
 function startScreen(){
   background("lightgreen");
+  // Button
+  fill(255); 
+  rect(width/2-150, height/2, 250, 100);
+  fill(0); 
+  textSize(32);
+  textAlign(CENTER, CENTER); 
+  text("Start", width/2-150+125, height/2+50); 
+  // Title
+  textSize(110);
+  fill(0);
+  textFont('Times New Roman');
+  text("CHECKERS", width/2-150+125, height/2 -200); 
 }
 
 function gameTime(){
@@ -122,6 +142,10 @@ function mousePressed(){
   let x = Math.floor(mouseX/CELL_SIZE);
   let y = Math.floor(mouseY/CELL_SIZE);
 
+  if (state === "start" && mouseX > width/2-150 && mouseX < width/2-150+250 && mouseY > height/2 && mouseY <height/2+100){
+    state = "game";
+  }
+
   if (x < 0 || x >= ROWS_COLS || y < 0 || y >= ROWS_COLS) {
     return;
   } 
@@ -132,9 +156,20 @@ function mousePressed(){
   selectPiece(x,y);
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 function selectPiece(x,y){
   let colorPiece = pieces[y][x];
-
   if (turn === "red" && colorPiece !==2 || turn === "black" && colorPiece !== 3){
     selectedPiece = null;
     resetPieceSelectionColor();
@@ -205,6 +240,7 @@ function movePiece(oldX, oldY, x, y){
     let captureY = (y + oldY) / 2;
     pieces[captureY][captureX] = 0;
   }
+  movingSound.play();
 
   selectedPiece = null;
   resetPieceSelectionColor();
@@ -215,8 +251,6 @@ function movePiece(oldX, oldY, x, y){
     turn = "red";
   }
 }
-
-
 
 function resetPieceSelectionColor(){
   for(let y = 0; y < ROWS_COLS; y++){
@@ -234,8 +268,9 @@ function resetPieceSelectionColor(){
 
 
 // add king promotion rules if have time
-// better design of the checker peices and board maybe
 // screens, start, win, lose, etc
+
+// if all black or all red is gone: other win, if both cannot move anymore, which ever one has more wins else tie.
 
 
 
