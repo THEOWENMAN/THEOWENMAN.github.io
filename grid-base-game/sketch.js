@@ -13,6 +13,7 @@ let turn = "black";
 let state = "start";
 let selectedPiece = null;
 let movingSound;
+let winner = null;
 
 // Declare constants
 const CELL_SIZE = 80;
@@ -41,6 +42,12 @@ function draw() {
   else if (state === "game"){
     gameTime();
   }
+  else if(state === "win"){
+    winScreen();
+  }
+  else if(state === "tie"){
+    tieScreen();
+  }
   
 }
 
@@ -60,10 +67,35 @@ function startScreen(){
   text("CHECKERS", width/2-150+125, height/2 -200); 
 }
 
+function tieScreen(){
+  background("black");
+  textAlign(CENTER, CENTER); 
+  textSize(150);
+  fill("white");
+  textFont('Times New Roman');
+  text("TIE", width/2, height/2 );  
+}
+function winScreen(){
+  background("black");
+  textAlign(CENTER, CENTER); 
+  textSize(150);
+  fill("white");
+  textFont('Times New Roman');
+  if (winner === "red"){
+    text("RED", width/2, height/2 );  
+  }
+  else if (winner ===  "black"){
+    text("BLACK", width/2, height/2 );  
+  }
+    
+}
+
 function gameTime(){
   background(0);
   displayBoard();
   displayPieces();
+  checkGameOver();
+  checkRemainingMoves();
 }
 
 function displayBoard(){
@@ -264,10 +296,78 @@ function resetPieceSelectionColor(){
   }
 }
 
+function checkGameOver(){
+  let redPieces = 0;
+  let blackPieces = 0;
+  let redMoves = 1;
+  let blackMoves = 1;
+
+  for (let y = 0; y < ROWS_COLS; y++ ){
+    for (let x = 0; x < ROWS_COLS; x++){
+      if(pieces[y][x] === 2){
+        redPieces++;
+      }
+      else if(pieces[y][x] === 3){
+        blackPieces++;
+      }
+    }
+
+    if(redPieces === 0){
+      winner = "black";
+      state = "win";
+    }
+    else if(blackPieces === 0){
+      winner = "red";
+      state = "win";
+    }
+    else if(blackMoves === 0 || redMoves === 0 ){
+      if(redPieces > blackPieces){
+        winner = "red";
+        state = "win";
+      }
+      else if(blackPieces > redPieces){
+        winner = "black";
+        state = "win";
+      }
+      else {
+        state = "tie";
+      }
+    }
+  }
+}
+
+function checkRemainingMoves(){
+  for (let y = 0; y < ROWS_COLS; y++){
+    for(let x = 0; x < ROWS_COLS; x++){
+      // red
+      if(pieces === 2 &&pieces[y - 1][x - 1] !== 5 && pieces[y - 2][x - 2] !== 5 && pieces[y - 1][x + 1] !== 5 && pieces[y - 2][x + 2] !== 5){
+        redMoves = 0;
+      }
+      if(pieces === 3 && pieces[y + 1][x - 1] !== 5 && pieces[y + 2][x - 2] !== 5 && pieces[y + 1][x + 1] !== 5 && pieces[y + 2][x + 2] !== 5){
+        blackMoves = 0;
+      }
+    }
+  }
+  // one check from the black to top, then check from the red to bottom
+}
 
 
 
-// add king promotion rules if have time
+
+
+
+
+
+
+
+
+
+
+
+
+//comments
+// extra for experts
+// double jump
 // screens, start, win, lose, etc
 
 // if all black or all red is gone: other win, if both cannot move anymore, which ever one has more wins else tie.
