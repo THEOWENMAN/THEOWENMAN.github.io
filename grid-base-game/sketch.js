@@ -15,6 +15,9 @@ let selectedPiece = null;
 let movingSound;
 let winner = null;
 
+let redPieces = 12;
+let blackPieces = 12;
+
 // Declare constants
 const CELL_SIZE = 80;
 const ROWS_COLS = 8;
@@ -23,6 +26,7 @@ const WHITESQUARE = 1;
 const REDPIECE = 2;
 const BLACKPIECE = 3;
 const GREENSQUARE = 5;
+
 
 
 function preload(){
@@ -95,7 +99,7 @@ function gameTime(){
   displayBoard();
   displayPieces();
   checkGameOver();
-  checkRemainingMoves();
+  // checkRemainingMoves();
 }
 
 function displayBoard(){
@@ -187,18 +191,6 @@ function mousePressed(){
   }
   selectPiece(x,y);
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 function selectPiece(x,y){
   let colorPiece = pieces[y][x];
@@ -296,106 +288,105 @@ function resetPieceSelectionColor(){
   }
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
 function checkGameOver(){
-  let redPieces = 0;
-  let blackPieces = 0;
-
-  for (let y = 0; y < ROWS_COLS; y++ ){
-    for (let x = 0; x < ROWS_COLS; x++){
-      if(pieces[y][x] === 2){
-        redPieces++;
-      }
-      else if(pieces[y][x] === 3){
-        blackPieces++;
-      }
-    }
-    const {redMoves, blackMoves } = checkRemainingMoves();
-
-    if(redPieces === 0){
-      winner = "black";
-      state = "win";
-    }
-    else if(blackPieces === 0){
-      winner = "red";
-      state = "win";
-    }
-    else if(blackMoves === 0 && redMoves === 0 ){
-      if(redPieces > blackPieces){
-        winner = "red";
-        state = "win";
-      }
-      else if(blackPieces > redPieces){
-        winner = "black";
-        state = "win";
-      }
-      else {
-        state = "tie";
-      }
-    }
+//     const {redMoves, blackMoves } = checkRemainingMoves();
+  if(redPieces === 0){
+    winner = "black";
+    state = "win";
+  }
+  else if(blackPieces === 0){
+    winner = "red";
+    state = "win";
   }
 }
+//   else if(blackMoves === 0 && redMoves === 0 ){
+//     if(redPieces > blackPieces){
+//       winner = "red";
+//       state = "win";
+//     }
+//     else if(blackPieces > redPieces){
+//       winner = "black";
+//       state = "win";
+//     }
+//     else {
+//       state = "tie";
+//     }    
+//   }
+// }  
 
-function checkRemainingMoves(){
-  let redMoves = 0;
-  let blackMoves = 0;
-  for (let y = 0; y < ROWS_COLS; y++){
-    for(let x = 0; x < ROWS_COLS; x++){
-      let piece = pieces[y][x];
-      if(piece === 2){
-        if(canRedMove(y,x)){
-          redMoves++;
-        }
-      }
-      if(piece === 3){
-        if(canBlackMove(y,x)){
-          blackMoves++;
-        }
-      }
-    }
-  }
-  return {redMoves, blackMoves};
-}
+// function checkRemainingMoves(){
+//   let redMoves = 0;
+//   let blackMoves = 0;
+//   for (let y = 0; y < ROWS_COLS; y++){
+//     for(let x = 0; x < ROWS_COLS; x++){
+//       let piece = pieces[y][x];
+//       if(piece === 2){
+//         if(canRedMove(y,x)){
+//           redMoves++;
+//         }
+//       }
+//       if(piece === 3){
+//         if(canBlackMove(y,x)){
+//           blackMoves++;
+//         }
+//       }
+//     }
+//   }
+//   return {redMoves, blackMoves};
+// }
 
-function canRedMove(y, x){
-  if(isMoveAvaliable(y + 1, x - 1) || isMoveAvaliable(y + 1, x + 1)){
-    return true;
-  }
-  return isCaptureAvaliable(y,x,1);
-}
+// function canRedMove(y, x){
+//   if(isMoveAvaliable(y + 1, x - 1) || isMoveAvaliable(y + 1, x + 1)){
+//     return true;
+//   }
+//   return isCaptureAvaliable(y,x,1);
+// }
 
-function canBlackMove(y, x){
-  if(isMoveAvaliable(y - 1, x - 1) || isMoveAvaliable(y - 1, x + 1)){
-    return true;
-  }
-  return isCaptureAvaliable(y,x,-1);
-}
+// function canBlackMove(y, x){
+//   if(isMoveAvaliable(y - 1, x - 1) || isMoveAvaliable(y - 1, x + 1)){
+//     return true;
+//   }
+//   return isCaptureAvaliable(y,x,-1);
+// }
 
-function isMoveAvaliable(y,x){
-  return y>=0 && y < ROWS_COLS && x >=0 && x < ROWS_COLS && pieces[y][x] === 0; 
-}
+// function isMoveAvaliable(y,x){
+//   return y>=0 && y < ROWS_COLS && x >=0 && x < ROWS_COLS && pieces[y][x] === 0; 
+// }
 
-function isCaptureAvaliable(y, x, direction){
-  let opponent;
-  if(pieces[y][x] === 2){
-    opponent = 3;
-  }
-  else {
-    opponent = 2;
-  }
+// function isCaptureAvaliable(y, x, direction){
+//   let opponent;
+//   if(pieces[y][x] === 2){
+//     opponent = 3;
+//   }
+//   else {
+//     opponent = 2;
+//   }
 
-  if(y+2*direction >= 0 && y+2 * direction < ROWS_COLS && x - 2 >=0){
-    if(pieces[y + direction][x-1] === opponent && pieces[y + 2 * direction][x-2] === 0){
-      return true;
-    }
-  }
-  if(y+2*direction >= 0 && y+2 * direction < ROWS_COLS && x + 2 < ROWS_COLS){
-    if(pieces[y + direction][x+1] === opponent && pieces[y + 2 * direction][x+2] === 0){
-      return true;
-    }
-  }
-  return false;
+//   if(y+2*direction >= 0 && y+2 * direction < ROWS_COLS && x - 2 >=0){
+//     if(pieces[y + direction][x-1] === opponent && pieces[y + 2 * direction][x-2] === 0){
+//       return true;
+//     }
+//   }
+//   if(y+2*direction >= 0 && y+2 * direction < ROWS_COLS && x + 2 < ROWS_COLS){
+//     if(pieces[y + direction][x+1] === opponent && pieces[y + 2 * direction][x+2] === 0){
+//       return true;
+//     }
+//   }
+//   return false;
 
-}
+// }
 
 
 
