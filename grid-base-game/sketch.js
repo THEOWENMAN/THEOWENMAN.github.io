@@ -225,7 +225,7 @@ function availableMoves(x,y){
     if( y + 1 < ROWS_COLS && x - 1 >= 0 && pieces[y + 1][x - 1] === 0){
       board[y + 1][x - 1] = 5;
     }
-    if( y + 1 < ROWS_COLS && x + 1 && pieces[y + 1][x + 1] === 0){
+    if( y + 1 < ROWS_COLS && x + 1 < ROWS_COLS && pieces[y + 1][x + 1] === 0){
       board[y + 1][x + 1] = 5;
     }
 
@@ -299,8 +299,6 @@ function resetPieceSelectionColor(){
 function checkGameOver(){
   let redPieces = 0;
   let blackPieces = 0;
-  let redMoves = 1;
-  let blackMoves = 1;
 
   for (let y = 0; y < ROWS_COLS; y++ ){
     for (let x = 0; x < ROWS_COLS; x++){
@@ -311,6 +309,7 @@ function checkGameOver(){
         blackPieces++;
       }
     }
+    const {redMoves, blackMoves } = checkRemainingMoves();
 
     if(redPieces === 0){
       winner = "black";
@@ -320,7 +319,7 @@ function checkGameOver(){
       winner = "red";
       state = "win";
     }
-    else if(blackMoves === 0 || redMoves === 0 ){
+    else if(blackMoves === 0 && redMoves === 0 ){
       if(redPieces > blackPieces){
         winner = "red";
         state = "win";
@@ -337,18 +336,65 @@ function checkGameOver(){
 }
 
 function checkRemainingMoves(){
+  let redMoves = 0;
+  let blackMoves = 0;
   for (let y = 0; y < ROWS_COLS; y++){
     for(let x = 0; x < ROWS_COLS; x++){
-      // red
-      if(pieces === 2 &&pieces[y - 1][x - 1] !== 5 && pieces[y - 2][x - 2] !== 5 && pieces[y - 1][x + 1] !== 5 && pieces[y - 2][x + 2] !== 5){
-        redMoves = 0;
+      let piece = pieces[y][x];
+      if(piece === 2){
+        if(canRedMove(y,x)){
+          redMoves++;
+        }
       }
-      if(pieces === 3 && pieces[y + 1][x - 1] !== 5 && pieces[y + 2][x - 2] !== 5 && pieces[y + 1][x + 1] !== 5 && pieces[y + 2][x + 2] !== 5){
-        blackMoves = 0;
+      if(piece === 3){
+        if(canBlackMove(y,x)){
+          blackMoves++;
+        }
       }
     }
   }
-  // one check from the black to top, then check from the red to bottom
+  return {redMoves, blackMoves};
+}
+
+function canRedMove(y, x){
+  if(isMoveAvaliable(y + 1, x - 1) || isMoveAvaliable(y + 1, x + 1)){
+    return true;
+  }
+  return isCaptureAvaliable(y,x,1);
+}
+
+function canBlackMove(y, x){
+  if(isMoveAvaliable(y - 1, x - 1) || isMoveAvaliable(y - 1, x + 1)){
+    return true;
+  }
+  return isCaptureAvaliable(y,x,-1);
+}
+
+function isMoveAvaliable(y,x){
+  return y>=0 && y < ROWS_COLS && x >=0 && x < ROWS_COLS && pieces[y][x] === 0; 
+}
+
+function isCaptureAvaliable(y, x, direction){
+  let opponent;
+  if(pieces[y][x] === 2){
+    opponent = 3;
+  }
+  else {
+    opponent = 2;
+  }
+
+  if(y+2*direction >= 0 && y+2 * direction < ROWS_COLS && x - 2 >=0){
+    if(pieces[y + direction][x-1] === opponent && pieces[y + 2 * direction][x-2] === 0){
+      return true;
+    }
+  }
+  if(y+2*direction >= 0 && y+2 * direction < ROWS_COLS && x + 2 < ROWS_COLS){
+    if(pieces[y + direction][x+1] === opponent && pieces[y + 2 * direction][x+2] === 0){
+      return true;
+    }
+  }
+  return false;
+
 }
 
 
@@ -367,10 +413,10 @@ function checkRemainingMoves(){
 
 //comments
 // extra for experts
-// double jump
+// switch all the magic numbers to consts
+// make it more neater
 // screens, start, win, lose, etc
 
-// if all black or all red is gone: other win, if both cannot move anymore, which ever one has more wins else tie.
 
 
 
