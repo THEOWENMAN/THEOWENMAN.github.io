@@ -12,6 +12,7 @@
 - [Game of Life](game-of-life)
 - [Character Moving in Grid](character-grid)
 - [Walker OOP](walker)
+- [Fireworks OOP](fireworks)
 
 # CS30 Projects
 - [Interactive Scene](interactive-scene)
