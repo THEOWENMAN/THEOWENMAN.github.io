@@ -14,6 +14,7 @@
 - [Walker OOP](walker)
 - [Fireworks OOP](fireworks)
 - [Connected Nodes OOP](nodes)
+- [Translate and Rotate](translate-rotate)
 # CS30 Projects
 - [Interactive Scene](interactive-scene)
 - [Array and Object Notation Assignment](array-and-object-notation-assignment)
