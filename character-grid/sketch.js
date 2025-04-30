@@ -20,8 +20,6 @@ let thePlayer = {
 function preload(){
   grassImg = loadImage("grass.png");
   pathImg = loadImage("paving.png");
-
-
 }
 
 function setup() {
