@@ -17,6 +17,7 @@
 - [Translate and Rotate](translate-rotate)
 - [Local Storage](local-storage)
 - [2d Colode Demo](2d-collide)
+- [OOP Inheritance](inheritance)
 # CS30 Projects
 - [Interactive Scene](interactive-scene)
 - [Array and Object Notation Assignment](array-and-object-notation-assignment)
